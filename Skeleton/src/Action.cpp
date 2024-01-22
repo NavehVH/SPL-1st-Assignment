@@ -116,7 +116,8 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
 
 //im lazy af
 void PrintActionsLog::act(WareHouse &wareHouse) {
-
+    //checking if i can update this by commit
+    return;
 }
 
 // BackupWareHouse
