@@ -12,7 +12,6 @@ void Action::error(string errorMsg)
     status = ActionStatus::ERROR;
     this->errorMsg = errorMsg;
     std::cout << "Error:" + errorMsg << std::endl;
-    return;
 }
 
 string Action::getErrorMsg() const
