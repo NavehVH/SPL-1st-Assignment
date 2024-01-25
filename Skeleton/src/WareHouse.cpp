@@ -315,3 +315,62 @@ void WareHouse::open () {
     isOpen = true;
 }
 
+void WareHouse::start() {
+    while (isOpen) {
+        string userInput, firstWord;
+        std::getline(std::cin, userInput);
+        std::istringstream iss;
+        if (firstWord == "step") {
+            int numberOfSteps;
+            iss >> numberOfSteps;
+            SimulateStep simulateStep(numberOfSteps);
+            simulateStep.act(*this);
+        } else if (firstWord == "order") {
+            int customerId;
+            iss >> customerId;
+            AddOrder addOrder(customerId);
+            addOrder.act(*this);
+        } else if (firstWord == "customer") {
+            string name, type;
+            int distance, maxOrders;
+            iss >> name >> type >> distance >> maxOrders;
+            if (type == "soldier") {
+                SoldierCustomer* soldierCustomer = new SoldierCustomer(customerCounter, name, distance, maxOrders);
+                customers.push_back(soldierCustomer);
+            } else {
+                CivilianCustomer* civilianCustomer = new CivilianCustomer(customerCounter, name, distance, maxOrders);
+                customers.push_back(civilianCustomer);
+            }
+            customerCounter++;
+        } else if (firstWord == "OrderStatus") {
+            int orderId;
+            iss >> orderId;
+            PrintOrderStatus printOrderStatus(orderId);
+            printOrderStatus.act(*this);
+        } else if (firstWord == "customerStatus") {
+            int customerId;
+            iss >> customerId;
+            PrintCustomerStatus printCustomerStatus(customerId);
+            printCustomerStatus.act(*this);
+        } else if (firstWord == "volunteerStatus") {
+            int volunteerId;
+            iss >> volunteerId;
+            PrintVolunteerStatus printVolunteerStatus(volunteerId);
+            printVolunteerStatus.act(*this);
+        } else if (firstWord == "log") {
+            PrintActionsLog printActionsLog;
+            printActionsLog.act(*this);
+        } else if (firstWord == "close") {
+            Close close;
+            close.act(*this);
+        } else if (firstWord == "backup") {
+            BackupWareHouse backupWareHouse;
+            backupWareHouse.act(*this);
+        } else if (firstWord == "restore") {
+            RestoreWareHouse restoreWareHouse;
+            restoreWareHouse.act(*this);
+        } else {
+            std::cout << "Invalid input" << std::endl;
+        }
+    }
+}

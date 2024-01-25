@@ -1,7 +1,8 @@
 #include <string>
 #include "Volunteer.h"
 
-//Volunteer
+class WareHouse;
+
 Volunteer::Volunteer(int id, const string &name): id(id), name(name) {}
 
 int Volunteer::getId() const
