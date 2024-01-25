@@ -1,13 +1,12 @@
 #pragma once
+
 #include <string>
 #include <vector>
 using std::string;
 using std::vector;
-
 class Order;
 
-class Customer
-{
+class Customer {
 public:
     Customer(int id, const string &name, int locationDistance, int maxOrders);
     virtual ~Customer();
@@ -19,7 +18,6 @@ public:
     bool canMakeOrder() const; // Returns true if the customer didn't reach max orders
     const vector<int> &getOrdersIds() const;
     int addOrder(int orderId); // return OrderId if order was added successfully, -1 otherwise
-
     virtual Customer *clone() const = 0; // Return a copy of the customer
 
 private:
@@ -30,8 +28,7 @@ private:
     vector<int> ordersId;
 };
 
-class SoldierCustomer : public Customer
-{
+class SoldierCustomer : public Customer {
 public:
     SoldierCustomer(int id, string name, int locationDistance, int maxOrders);
     ~SoldierCustomer();
@@ -40,8 +37,7 @@ public:
 private:
 };
 
-class CivilianCustomer : public Customer
-{
+class CivilianCustomer : public Customer {
 public:
     CivilianCustomer(int id, string name, int locationDistance, int maxOrders);
     ~CivilianCustomer();

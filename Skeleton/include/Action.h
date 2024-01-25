@@ -1,18 +1,19 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include "WareHouse.h"
+using std::string;
+using std::vector;
 
 extern WareHouse * backup;
 
-enum class ActionStatus
-{
+enum class ActionStatus {
     COMPLETED,
     ERROR
 };
 
-enum class CustomerType
-{
+enum class CustomerType {
     Soldier,
     Civilian
 };
@@ -37,8 +38,7 @@ private:
     ActionStatus status;
 };
 
-class SimulateStep : public Action
-{
+class SimulateStep : public Action {
 
 public:
     SimulateStep(int numOfSteps);
@@ -50,8 +50,7 @@ private:
     const int numOfSteps;
 };
 
-class AddOrder : public Action
-{
+class AddOrder : public Action {
 public:
     AddOrder(int id);
     void act(WareHouse &wareHouse) override;
@@ -62,8 +61,7 @@ private:
     const int customerId;
 };
 
-class AddCustomer : public Action
-{
+class AddCustomer : public Action {
 public:
     AddCustomer(string customerName, CustomerType customerType, int distance, int maxOrders);
     void act(WareHouse &wareHouse) override;
@@ -77,8 +75,7 @@ private:
     const int maxOrders;
 };
 
-class PrintOrderStatus : public Action
-{
+class PrintOrderStatus : public Action {
 public:
     PrintOrderStatus(int id);
     void act(WareHouse &wareHouse) override;
@@ -89,8 +86,7 @@ private:
     const int orderId;
 };
 
-class PrintCustomerStatus : public Action
-{
+class PrintCustomerStatus : public Action {
 public:
     PrintCustomerStatus(int customerId);
     void act(WareHouse &wareHouse) override;
@@ -101,8 +97,7 @@ private:
     const int customerId;
 };
 
-class PrintVolunteerStatus : public Action
-{
+class PrintVolunteerStatus : public Action {
 public:
     PrintVolunteerStatus(int id);
     void act(WareHouse &wareHouse) override;
@@ -113,8 +108,7 @@ private:
     const int volunteerId;
 };
 
-class PrintActionsLog : public Action
-{
+class PrintActionsLog : public Action {
 public:
     PrintActionsLog() {};
     void act(WareHouse &wareHouse) override;
@@ -124,8 +118,7 @@ public:
 private:
 };
 
-class Close : public Action
-{
+class Close : public Action {
 public:
     Close() {};
     void act(WareHouse &wareHouse) override;
@@ -134,8 +127,7 @@ public:
 private:
 };
 
-class BackupWareHouse : public Action
-{
+class BackupWareHouse : public Action {
 public:
     BackupWareHouse() {};
     void act(WareHouse &wareHouse) override;
@@ -145,8 +137,7 @@ public:
 private:
 };
 
-class RestoreWareHouse : public Action
-{
+class RestoreWareHouse : public Action {
 public:
     RestoreWareHouse() {};
     void act(WareHouse &wareHouse) override;

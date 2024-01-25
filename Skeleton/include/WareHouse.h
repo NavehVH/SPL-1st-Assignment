@@ -1,18 +1,19 @@
 #pragma once
+
 #include <string>
 #include <vector>
-
 #include "Order.h"
 #include "Customer.h"
 #include "Volunteer.h"
+using std::string;
+using std::vector;
 
 class Action;
 class Volunteer;
 
 // Warehouse responsible for Volunteers, Customers and Actions.
 
-class WareHouse
-{
+class WareHouse {
 
 public:
     WareHouse(const string &configFilePath);

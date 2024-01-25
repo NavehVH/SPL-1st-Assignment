@@ -1,7 +1,7 @@
 #include "Order.h"
 #include "Volunteer.h"
 #include "Customer.h"
-#include "action.h"
+#include "Action.h"
 #include "WareHouse.h"
 #include <fstream>
 #include <iostream>
@@ -315,6 +315,11 @@ void WareHouse::open () {
     isOpen = true;
 }
 
+// void WareHouse::close() {
+//     Close close;
+//     close.act(*this);
+// }
+
 void WareHouse::start() {
     while (isOpen) {
         string userInput, firstWord;
@@ -360,9 +365,9 @@ void WareHouse::start() {
         } else if (firstWord == "log") {
             PrintActionsLog printActionsLog;
             printActionsLog.act(*this);
-        } else if (firstWord == "close") {
-            Close close;
-            close.act(*this);
+        // } else if (firstWord == "close") {
+        //     Close close;
+        //     close.act(*this);
         } else if (firstWord == "backup") {
             BackupWareHouse backupWareHouse;
             backupWareHouse.act(*this);

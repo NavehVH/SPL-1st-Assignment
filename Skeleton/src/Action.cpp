@@ -2,44 +2,35 @@
 #include <iostream>
 #include "Action.h"
 
-void Action::complete()
-{
+void Action::complete() {
     status = ActionStatus::COMPLETED;
 }
 
-void Action::error(string errorMsg)
-{
+void Action::error(string errorMsg) {
     status = ActionStatus::ERROR;
     this->errorMsg = errorMsg;
     std::cout << "Error:" + errorMsg << std::endl;
 }
 
-string Action::getErrorMsg() const
-{
+string Action::getErrorMsg() const {
     return errorMsg;
 }
 
-ActionStatus Action::getStatus() const
-{
+ActionStatus Action::getStatus() const {
     return status;
 }
 
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {
 }
 
-void SimulateStep::act(WareHouse &wareHouse)
-{
-    for (int i = 0; i < numOfSteps; i++)
-    {
-        for (Volunteer *volunteer : wareHouse.getVolunteers()) // part(3)
-        {
+void SimulateStep::act(WareHouse &wareHouse) {
+    for (int i = 0; i < numOfSteps; i++) {
+        for (Volunteer *volunteer : wareHouse.getVolunteers()) { // part(3) 
             volunteer->step(); // part (2)
-            if (volunteer->hasFinishedOrder())
-            {
+            if (volunteer->hasFinishedOrder()) {
                 //volunteer->acceptOrder();     // part (2) and (1) #TODO: Do a method that gets the most needed to finish order, easy
                 AddOrder(getActiveOrderId()); // part (1), Updates to the correct vector of orders
-                if (!volunteer->hasOrdersLeft())
-                { // part(4)
+                if (!volunteer->hasOrdersLeft()) { // part(4)
                     // DELETE THE BITCH
                 }
             }
@@ -53,11 +44,10 @@ SimulateStep* SimulateStep::clone() const {
 
 AddOrder::AddOrder(int id) : customerId(id) {
 }
-void AddOrder::act(WareHouse &wareHouse)
-{
+void AddOrder::act(WareHouse &wareHouse) {
     Customer &c = wareHouse.getCustomer(customerId);
-    if (c.getId() == 0 || !c.canMakeOrder())
-    { // don't know how to check if didn't find customer (id = 0?\null?), #TODO: add default return
+    if (c.getId() == 0 || !c.canMakeOrder()) {
+         // don't know how to check if didn't find customer (id = 0?\null?), #TODO: add default return
         error("Cannot place this order");
         return;
     }
@@ -75,8 +65,7 @@ AddCustomer::AddCustomer(string customerName, CustomerType customerType, int dis
     : customerName(customerName), customerType(customerType), distance(distance), maxOrders(maxOrders) {
 }
 
-void AddCustomer::act(WareHouse &wareHouse)
-{
+void AddCustomer::act(WareHouse &wareHouse) {
     wareHouse.setCustomerCounter(wareHouse.getCustomerCounter() + 1);
     Customer *c = nullptr;
     if (customerType == CustomerType::Soldier)
@@ -92,11 +81,9 @@ AddCustomer* AddCustomer::clone() const {
 PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {
 }
 
-void PrintOrderStatus::act(WareHouse &wareHouse)
-{
+void PrintOrderStatus::act(WareHouse &wareHouse) {
 
-    if (wareHouse.getOrderCounter() < orderId)
-    {
+    if (wareHouse.getOrderCounter() < orderId) {
         std::cout << "Order doesn't exist" << std::endl;
         return;
     }
@@ -112,17 +99,14 @@ PrintOrderStatus* PrintOrderStatus::clone() const {
 PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId) {   
 }
 
-void PrintCustomerStatus::act(WareHouse &wareHouse)
-{
-    if (wareHouse.getCustomerCounter() < customerId)
-    {
+void PrintCustomerStatus::act(WareHouse &wareHouse) {
+    if (wareHouse.getCustomerCounter() < customerId) {
         std::cout << "Customer doesn't exist" << std::endl;
         return;
     }
     std::cout << "CustomerID: " + customerId << std::endl;
 
-    for (int orderId : wareHouse.getCustomer(customerId).getOrdersIds())
-    {
+    for (int orderId : wareHouse.getCustomer(customerId).getOrdersIds()) {
         Order order = wareHouse.getOrder(orderId);
         std::cout << order.toString() << std::endl;
     }
@@ -137,10 +121,8 @@ PrintCustomerStatus* PrintCustomerStatus::clone() const {
 
 PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) {
 }
-void PrintVolunteerStatus::act(WareHouse &wareHouse)
-{
-    if (wareHouse.getVolunteerCounter() < volunteerId)
-    {
+void PrintVolunteerStatus::act(WareHouse &wareHouse) {
+    if (wareHouse.getVolunteerCounter() < volunteerId) {
         std::cout << "Volunteer doesn't exist" << std::endl;
         return;
     }
@@ -162,11 +144,9 @@ PrintActionsLog* PrintActionsLog::clone() const {
     return new PrintActionsLog(*this);
 }
 
-void BackupWareHouse::act(WareHouse &wareHouse)
-{
+void BackupWareHouse::act(WareHouse &wareHouse) {
     extern WareHouse *backup;
-    if (backup != nullptr)
-    {
+    if (backup != nullptr) {
         delete (backup);
     }
     backup = new WareHouse(wareHouse);
@@ -176,12 +156,10 @@ BackupWareHouse* BackupWareHouse::clone() const {
     return new BackupWareHouse(*this);
 }
 
-void RestoreWareHouse::act(WareHouse &wareHouse)
-{
-    if (backup == nullptr)
+void RestoreWareHouse::act(WareHouse &wareHouse) {
+    if (backup == nullptr) {
         error("Backup does not exist");
-    else
-    {
+    } else {
         wareHouse = *backup;
         complete();
     }

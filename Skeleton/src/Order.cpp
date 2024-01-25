@@ -1,14 +1,15 @@
 #include "Order.h"
 
-Order::Order(int id, int customerId, int distance): id(id), customerId(customerId), status(OrderStatus::PENDING), distance(distance), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {}
+Order::Order(int id, int customerId, int distance)
+                    : id(id), customerId(customerId), status(OrderStatus::PENDING),
+                     distance(distance), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) { 
+}
 
-int Order::getId() const
-{
+int Order::getId() const {
     return id;
 }
 
-int Order::getCustomerId() const
-{
+int Order::getCustomerId() const {
     return customerId;
 }
 
@@ -16,46 +17,38 @@ int Order::getDistance() const {
     return distance;
 }
 
-OrderStatus Order::getStatus() const
-{
+OrderStatus Order::getStatus() const {
     return status;
 }
 
-void Order::setStatus(OrderStatus status)
-{
+void Order::setStatus(OrderStatus status) {
     this->status = status;
 }
 
-int Order::getCollectorId() const
-{
+int Order::getCollectorId() const {
     if (collectorId == 0) //no id?
         return NO_VOLUNTEER;
     return collectorId;
 }
 
-void Order::setCollectorId(int collectorId)
-{
+void Order::setCollectorId(int collectorId) {
     this->collectorId = collectorId;
 }
 
-int Order::getDriverId() const
-{
+int Order::getDriverId() const {
     if (driverId == 0) //no id?
         return NO_VOLUNTEER;
     return driverId;
 }
 
-void Order::setDriverId(int driverId)
-{
+void Order::setDriverId(int driverId) {
     this->driverId = driverId;
 }
 
-string Order::enumToString(OrderStatus e) const
-{
+string Order::enumToString(OrderStatus e) const {
     string text = "";
 
-    switch (e)
-    {
+    switch (e) {
     case OrderStatus::PENDING:
         text = "PENDING";
         break;

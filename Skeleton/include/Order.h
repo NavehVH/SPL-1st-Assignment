@@ -6,19 +6,16 @@ using std::string;
 using std::vector;
 
 class Volunteer;
+#define NO_VOLUNTEER -1
 
-enum class OrderStatus
-{
+enum class OrderStatus {
     PENDING,
     COLLECTING,
     DELIVERING,
     COMPLETED,
 };
 
-#define NO_VOLUNTEER -1
-
-class Order
-{
+class Order {
 
 public:
     Order(int id, int customerId, int distance);
