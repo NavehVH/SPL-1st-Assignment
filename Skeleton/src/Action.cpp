@@ -121,6 +121,7 @@ PrintCustomerStatus* PrintCustomerStatus::clone() const {
 
 PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) {
 }
+
 void PrintVolunteerStatus::act(WareHouse &wareHouse) {
     if (wareHouse.getVolunteerCounter() < volunteerId) {
         std::cout << "Volunteer doesn't exist" << std::endl;
@@ -159,7 +160,7 @@ BackupWareHouse* BackupWareHouse::clone() const {
 void RestoreWareHouse::act(WareHouse &wareHouse) {
     if (backup == nullptr) {
         error("Backup does not exist");
-    } else {
+    } else{
         wareHouse = *backup;
         complete();
     }

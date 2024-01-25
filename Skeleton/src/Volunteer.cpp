@@ -211,72 +211,73 @@ bool DriverVolunteer::canTakeOrder(const Order &order) const {
 string DriverVolunteer::toString() const {
     string s = "VolunteerID " + std::to_string(getId()) + "\r\n"
     "isBusy: ";
-    if (isBusy())
+    if (isBusy()) {
         s += "True";
-    else {
+    } else {
         s += "False"
         "\r\nOrderID: " + activeOrderId;
     }
     s += "distance_Left: ";
-    if (distanceLeft == 0)
+    if (distanceLeft == 0) {
         s += "None";
-    else
-        s += std::to_string(distanceLeft);
+    } else {
+        s += std::to_string(distanceLeft); 
+    }
     s += "\r\nordersLeft: No Limit"; 
     return s;
 }
 
 //always true because he is not limited
-bool DriverVolunteer::hasOrdersLeft() const
-{
+bool DriverVolunteer::hasOrdersLeft() const {
     return true;
 }
 
-int DriverVolunteer::getDistanceLeft() const
-{
+int DriverVolunteer::getDistanceLeft() const {
     return distanceLeft;
 }
-int DriverVolunteer::getMaxDistance() const
-{
+
+int DriverVolunteer::getMaxDistance() const {
     return maxDistance;
 }
-int DriverVolunteer::getDistancePerStep() const
-{
+
+int DriverVolunteer::getDistancePerStep() const {
     return distancePerStep;
 }
 
 //LimitedDriverVolunteer 
 //#TODO Finish here limited driver methods, didn't finish
 
-LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders): DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(ordersLeft) {}
+LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders)
+                : DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(ordersLeft) { 
+}
 
 LimitedDriverVolunteer *LimitedDriverVolunteer::clone() const {
     return new LimitedDriverVolunteer(*this);
 }
 
-int LimitedDriverVolunteer::getMaxOrders() const
-{
+int LimitedDriverVolunteer::getMaxOrders() const {
     return maxOrders;
 }
-int LimitedDriverVolunteer::getNumOrdersLeft() const
-{
+
+int LimitedDriverVolunteer::getNumOrdersLeft() const {
     return ordersLeft;
 }
 
 string LimitedDriverVolunteer::toString() const {
     string s = "VolunteerID " + std::to_string(getId()) + "\r\n"
     "isBusy: ";
-    if (isBusy())
+    if (isBusy()) {
         s += "True";
-    else {
+    } else {
         s += "False"
         "\r\nOrderID: " + activeOrderId;
     }
     s += "distance_Left: ";
-    if (getDistanceLeft() == 0)
+    if (getDistanceLeft() == 0) {
         s += "None";
-    else
+    } else {
         s += std::to_string(getDistanceLeft());
+    }
     s += "\r\nordersLeft: " + ordersLeft; 
     return s;
 }

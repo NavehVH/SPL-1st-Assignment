@@ -21,7 +21,7 @@ enum class CustomerType {
 class Action {
 
 public:
-    Action();
+    Action() {};
     virtual ~Action(){};
     ActionStatus getStatus() const;
     virtual void act(WareHouse &wareHouse) = 0;

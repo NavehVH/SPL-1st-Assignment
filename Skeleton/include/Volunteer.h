@@ -11,7 +11,7 @@ using std::vector;
 class Volunteer {
     public:
         Volunteer(int id, const string &name);
-        virtual ~Volunteer();
+        virtual ~Volunteer() {};
         int getId() const; //d
         const string &getName() const; //d
         int getActiveOrderId() const; //d
