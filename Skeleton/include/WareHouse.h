@@ -21,7 +21,7 @@ public:
     WareHouse& operator = (const WareHouse &other);
     WareHouse (WareHouse&& other) noexcept;
     WareHouse& operator = (WareHouse&& other) noexcept;
-    virtual ~WareHouse();
+    virtual ~WareHouse();   
     void start();
     const vector<Action *> &getActions() const; //d
     void addOrder(Order *order);

@@ -12,8 +12,6 @@
 #include <utility>
 
 
-
-
 WareHouse::WareHouse(const string &configFilePath){
     std::ifstream file(configFilePath);
     if (file.is_open()){
@@ -22,14 +20,15 @@ WareHouse::WareHouse(const string &configFilePath){
         std::cout << "WareHouse is open" << std::endl;
         open();
         start();
-
     }
     else {
         std::cout << "Failed to open file" << std::endl; 
         exit(1);
     }
 }
-WareHouse::WareHouse(const WareHouse &other): orderCounter(other.orderCounter), volunteerCounter(other.volunteerCounter), customerCounter(other.customerCounter), isOpen(other.isOpen) {
+WareHouse::WareHouse(const WareHouse &other): orderCounter(other.orderCounter), volunteerCounter(other.volunteerCounter),
+                 customerCounter(other.customerCounter), isOpen(other.isOpen) {
+
     for (const Action* a : other.actionsLog) {
             actionsLog.push_back(a->clone());
         }
@@ -110,7 +109,13 @@ WareHouse& WareHouse::operator=(const WareHouse& other) {
     return *this;
 }
 
-WareHouse::WareHouse(WareHouse&& other) noexcept : isOpen(other.isOpen), orderCounter(other.orderCounter), volunteerCounter(other.volunteerCounter), customerCounter(other.customerCounter), actionsLog(std::move(other.actionsLog)), volunteers(std::move(other.volunteers)), pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)), completedOrders(std::move(other.completedOrders)), customers(std::move(other.customers)) {
+WareHouse::WareHouse(WareHouse&& other) noexcept 
+                : isOpen(other.isOpen), orderCounter(other.orderCounter), 
+                volunteerCounter(other.volunteerCounter), customerCounter(other.customerCounter),
+                 actionsLog(std::move(other.actionsLog)), volunteers(std::move(other.volunteers)), 
+                 pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)),
+                  completedOrders(std::move(other.completedOrders)), customers(std::move(other.customers)) {
+
     other.actionsLog.clear();
     other.volunteers.clear();
     other.pendingOrders.clear();
@@ -199,7 +204,7 @@ WareHouse::~WareHouse(){
 
 void WareHouse::processFile(std::ifstream& inFile) {
     std::string line, word, firstWord, name, type;
-    int coolDown, maxOrders, distance, maxDistance, distancePerStep; // Removed duplicate declaration of maxOrders
+    int coolDown, maxOrders, distance, maxDistance, distancePerStep;
 
     while (getline(inFile, line)) {
         std::istringstream iss(line);
@@ -283,7 +288,7 @@ Order &WareHouse::getOrder(int orderId) const
             return *o;
 }
 
-void WareHouse::addOrder(Order *order) {
+void WareHouse::addOrder(Order* order) {
     if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
     {
         if (order->getStatus() == OrderStatus::PENDING) {
@@ -315,16 +320,12 @@ void WareHouse::open () {
     isOpen = true;
 }
 
-// void WareHouse::close() {
-//     Close close;
-//     close.act(*this);
-// }
-
 void WareHouse::start() {
     while (isOpen) {
         string userInput, firstWord;
         std::getline(std::cin, userInput);
-        std::istringstream iss;
+        std::istringstream iss(userInput);
+        iss >> firstWord;
         if (firstWord == "step") {
             int numberOfSteps;
             iss >> numberOfSteps;

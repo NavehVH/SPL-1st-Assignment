@@ -19,7 +19,7 @@ class Order {
 
 public:
     Order(int id, int customerId, int distance);
-    virtual ~Order();
+    virtual ~Order() {};
     int getId() const;                   
     int getCustomerId() const;
     int getDistance() const;            
