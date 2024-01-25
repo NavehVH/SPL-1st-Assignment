@@ -16,6 +16,10 @@ class WareHouse
 
 public:
     WareHouse(const string &configFilePath);
+    WareHouse(const WareHouse &other);
+    WareHouse& operator = (const WareHouse &other);
+    WareHouse (WareHouse&& other) noexcept;
+    WareHouse& operator = (WareHouse&& other) noexcept;
     virtual ~WareHouse();
     void start();
     const vector<Action *> &getActions() const; //d
@@ -39,6 +43,7 @@ public:
     vector<Volunteer *> &getVolunteers();
 
 private:
+    void processFile(std::ifstream& inFile);
     bool isOpen;                    
     vector<Action *> actionsLog; 
     vector<Volunteer *> volunteers;  

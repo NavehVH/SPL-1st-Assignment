@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include "../include/Action.h"
+#include "Action.h"
 
 void Action::complete()
 {
@@ -24,6 +24,9 @@ ActionStatus Action::getStatus() const
     return status;
 }
 
+SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {
+}
+
 void SimulateStep::act(WareHouse &wareHouse)
 {
     for (int i = 0; i < numOfSteps; i++)
@@ -44,6 +47,12 @@ void SimulateStep::act(WareHouse &wareHouse)
     }
 }
 
+SimulateStep* SimulateStep::clone() const {
+    return new SimulateStep(*this);
+}
+
+AddOrder::AddOrder(int id) : customerId(id) {
+}
 void AddOrder::act(WareHouse &wareHouse)
 {
     Customer &c = wareHouse.getCustomer(customerId);
@@ -58,7 +67,13 @@ void AddOrder::act(WareHouse &wareHouse)
     wareHouse.getPendingOrders().push_back(o);
 }
 
-// AddCustomer::AddCustomer(string customerName, string customerType, int distance, int maxOrders): Action(), customerName(customerName), customerType(customerType), distance(distance), maxOrders(maxOrders) {}
+AddOrder* AddOrder::clone() const {
+    return new AddOrder(*this);
+}
+
+AddCustomer::AddCustomer(string customerName, CustomerType customerType, int distance, int maxOrders)
+    : customerName(customerName), customerType(customerType), distance(distance), maxOrders(maxOrders) {
+}
 
 void AddCustomer::act(WareHouse &wareHouse)
 {
@@ -68,6 +83,13 @@ void AddCustomer::act(WareHouse &wareHouse)
         c = new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
     else
         c = new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
+}
+
+AddCustomer* AddCustomer::clone() const {
+    return new AddCustomer(*this);
+}
+
+PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {
 }
 
 void PrintOrderStatus::act(WareHouse &wareHouse)
@@ -81,6 +103,13 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
 
     Order order = wareHouse.getOrder(orderId);
     std::cout << order.toString() << std::endl;
+}
+
+PrintOrderStatus* PrintOrderStatus::clone() const {
+    return new PrintOrderStatus(*this);
+}
+
+PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId) {   
 }
 
 void PrintCustomerStatus::act(WareHouse &wareHouse)
@@ -102,6 +131,12 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     std::cout << "numOrdersLeft: " + numOrdersLeft << std::endl;
 }
 
+PrintCustomerStatus* PrintCustomerStatus::clone() const {
+    return new PrintCustomerStatus(*this);
+}
+
+PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) {
+}
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
     if (wareHouse.getVolunteerCounter() < volunteerId)
@@ -114,14 +149,18 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
     std::cout << v.toString() << std::endl;
 }
 
-//im lazy af
+PrintVolunteerStatus* PrintVolunteerStatus::clone() const {
+    return new PrintVolunteerStatus(*this);
+}
+
 void PrintActionsLog::act(WareHouse &wareHouse) {
     //checking if i can update this by commit
     return;
 }
 
-// BackupWareHouse
-BackupWareHouse::BackupWareHouse() : Action() {}
+PrintActionsLog* PrintActionsLog::clone() const {
+    return new PrintActionsLog(*this);
+}
 
 void BackupWareHouse::act(WareHouse &wareHouse)
 {
@@ -133,9 +172,9 @@ void BackupWareHouse::act(WareHouse &wareHouse)
     backup = new WareHouse(wareHouse);
     complete();
 }
-
-/// RestoreWareHouse
-RestoreWareHouse::RestoreWareHouse() : Action() {}
+BackupWareHouse* BackupWareHouse::clone() const {
+    return new BackupWareHouse(*this);
+}
 
 void RestoreWareHouse::act(WareHouse &wareHouse)
 {
@@ -146,4 +185,8 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
         wareHouse = *backup;
         complete();
     }
+}
+
+RestoreWareHouse* RestoreWareHouse::clone() const {
+    return new RestoreWareHouse(*this);
 }

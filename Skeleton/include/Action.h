@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 #include "WareHouse.h"
-using std::string;
-using std::vector;
+
+extern WareHouse * backup;
 
 enum class ActionStatus
 {
@@ -17,15 +17,11 @@ enum class CustomerType
     Civilian
 };
 
-class Customer;
+class Action {
 
-extern WareHouse * backup;
-
-class Action
-{
 public:
     Action();
-    virtual ~Action();
+    virtual ~Action(){};
     ActionStatus getStatus() const;
     virtual void act(WareHouse &wareHouse) = 0;
     virtual string toString() const = 0;
@@ -48,7 +44,7 @@ public:
     SimulateStep(int numOfSteps);
     void act(WareHouse &wareHouse) override;
     std::string toString() const override;
-    SimulateStep *clone() const override;
+    SimulateStep* clone() const override;
 
 private:
     const int numOfSteps;
@@ -69,7 +65,7 @@ private:
 class AddCustomer : public Action
 {
 public:
-    AddCustomer(string customerName, string customerType, int distance, int maxOrders);
+    AddCustomer(string customerName, CustomerType customerType, int distance, int maxOrders);
     void act(WareHouse &wareHouse) override;
     AddCustomer *clone() const override;
     string toString() const override;
@@ -120,7 +116,7 @@ private:
 class PrintActionsLog : public Action
 {
 public:
-    PrintActionsLog();
+    PrintActionsLog() {};
     void act(WareHouse &wareHouse) override;
     PrintActionsLog *clone() const override;
     string toString() const override;
@@ -131,7 +127,7 @@ private:
 class Close : public Action
 {
 public:
-    Close();
+    Close() {};
     void act(WareHouse &wareHouse) override;
     string toString() const override;
 
@@ -141,7 +137,7 @@ private:
 class BackupWareHouse : public Action
 {
 public:
-    BackupWareHouse();
+    BackupWareHouse() {};
     void act(WareHouse &wareHouse) override;
     BackupWareHouse *clone() const override;
     string toString() const override;
@@ -152,7 +148,7 @@ private:
 class RestoreWareHouse : public Action
 {
 public:
-    RestoreWareHouse();
+    RestoreWareHouse() {};
     void act(WareHouse &wareHouse) override;
     RestoreWareHouse *clone() const override;
     string toString() const override;
