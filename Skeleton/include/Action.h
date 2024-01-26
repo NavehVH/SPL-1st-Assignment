@@ -122,6 +122,7 @@ class Close : public Action {
 public:
     Close() {};
     void act(WareHouse &wareHouse) override;
+    Close *clone() const override;
     string toString() const override;
 
 private:

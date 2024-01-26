@@ -37,7 +37,9 @@ public:
     int getCustomerCounter();
     void setCustomerCounter(int customerCounter);
     int getVolunteerCounter();
-
+    Order &getNextOrder(Volunteer *v) const;
+    void DeleteLimitedVolunteer(Volunteer *v) const;
+    
     vector<Order *> &getPendingOrders(); // added by myself
     vector<Order *> &getInProcessOrders();
     vector<Order *> &getCompletedOrders();
