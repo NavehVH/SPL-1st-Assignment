@@ -1,65 +1,28 @@
-# define some Makefile variables for the compiler and compiler flags
-
-# to use Makefile variables later in the Makefile: $()
-
 CC = g++
+CFLAGS = -g -Wall -Weffc++ -std=c++11 -Iinclude
 
-CFLAGS = -g -Wall -Weffc++ -std=c++11
+SRC_DIR = src
+INCLUDE_DIR = include
+BIN_DIR = bin
 
-LFLAGS = -L/usr/lib
+# List of source files
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
+# List of object files
+OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(SRCS))
 
-# All Targets
+# Name of the executable
+TARGET = $(BIN_DIR)/main
 
-all: warehouse
+.PHONY: all clean
 
+all: $(TARGET)
 
-# Tool invocations
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
 
-# Executable "warehouse" depends on the files warehouse.o.
-
-warehouse: clean bin/Action.o bin/Customer.o bin/main.o bin/Order.o bin/Volunteer.o bin/Warehouse.o
-
-    @echo 'Building target: warehouse'
-
-    @echo 'Invoking: C++ Linker'
-
-	$(CC) -o bin/warehouse bin/Action.o bin/Customer.o bin/main.o bin/Order.o bin/Volunteer.o bin/Warehouse.o $(LFLAGS)
-
-    @echo 'Finished building target: warehouse'
-
-	@echo '	'
-
-
-# Depends on the source and header files
-
-bin/Action.o: src/Action.cpp
-
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/Action.o src/Action.cpp
-
-
-bin/Customer.o: src/Customer.cpp
-
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/Customer.o src/Customer.cpp
-
-bin/main.o: src/main.cpp
-
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/main.o src/main.cpp
-
-bin/Order.o: src/Order.cpp
-
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/Order.o src/Order.cpp
-
-bin/Volunteer.o: src/Volunteer.cpp
-
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/Volunteer.o src/Volunteer.cpp
-
-bin/Warehouse.o: src/Warehouse.cpp
-
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/Warehouse.o src/Warehouse.cpp
-
-#Clean the build directory
+$(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-
-	rm -f bin/*
+	rm -rf $(BIN_DIR)/*.o $(TARGET)

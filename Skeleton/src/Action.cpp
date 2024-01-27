@@ -30,17 +30,13 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 
 void SimulateStep::act(WareHouse &wareHouse)
 {
-    for (int i = 0; i < numOfSteps; i++)
-    {
-        for (Volunteer *volunteer : wareHouse.getVolunteers())
-        {                      // part(3)
+    for (int i = 0; i < numOfSteps; i++) {
+        for (Volunteer *volunteer : wareHouse.getVolunteers()) { // part(3)
             volunteer->step(); // part (2)
-            if (volunteer->hasFinishedOrder())
-            {
-                volunteer->acceptOrder(wareHouse.getNextOrder(volunteer));  // part (2) and (1)
+            if (volunteer->hasFinishedOrder()) {
+                volunteer->acceptOrder(wareHouse.getNextOrder(volunteer)); // part (2) and (1)
                 AddOrder(volunteer->getActiveOrderId()); // part (1), Updates to the correct vector of orders
-                if (!volunteer->hasOrdersLeft())
-                { // part(4)
+                if (!volunteer->hasOrdersLeft()) { // part(4)
                     wareHouse.DeleteLimitedVolunteer(volunteer);
                 }
             }
@@ -81,7 +77,8 @@ void AddOrder::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string AddOrder::toString() const {
+string AddOrder::toString() const
+{
     return "order " + customerId;
 }
 
@@ -95,7 +92,8 @@ AddCustomer::AddCustomer(string customerName, CustomerType customerType, int dis
 {
 }
 
-string AddCustomer::toString() const {
+string AddCustomer::toString() const
+{
     string s = "customer " + customerName + " ";
     if (customerType == CustomerType::Civilian)
         s += "civilian";
@@ -143,7 +141,8 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintOrderStatus::toString() const {
+string PrintOrderStatus::toString() const
+{
     return "printOrderStatus " + orderId;
 }
 
@@ -178,7 +177,8 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintCustomerStatus::toString() const {
+string PrintCustomerStatus::toString() const
+{
     return "printCustomerStatus " + customerId;
 }
 
@@ -206,7 +206,8 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintVolunteerStatus::toString() const {
+string PrintVolunteerStatus::toString() const
+{
     return "printVolunteerStatus " + volunteerId;
 }
 
@@ -229,7 +230,8 @@ void PrintActionsLog::act(WareHouse &wareHouse)
     complete();
 }
 
-string PrintActionsLog::toString() const {
+string PrintActionsLog::toString() const
+{
     return "printActionLog";
 }
 
@@ -250,7 +252,8 @@ void BackupWareHouse::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string BackupWareHouse::toString() const {
+string BackupWareHouse::toString() const
+{
     return "backupWareHouse";
 }
 
@@ -273,7 +276,8 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
     }
 }
 
-string RestoreWareHouse::toString() const {
+string RestoreWareHouse::toString() const
+{
     return "restoreWareHouse";
 }
 
@@ -282,11 +286,13 @@ RestoreWareHouse *RestoreWareHouse::clone() const
     return new RestoreWareHouse(*this);
 }
 
-void Close::act(WareHouse &WareHouse) {
+void Close::act(WareHouse &WareHouse)
+{
     return;
 }
 
-string Close::toString() const {
+string Close::toString() const
+{
     return "close";
 }
 
