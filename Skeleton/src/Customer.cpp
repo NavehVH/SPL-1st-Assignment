@@ -35,9 +35,8 @@ int Customer::getNumOrders() const { // Returns num of orders the customer has m
 }
 
 bool Customer::canMakeOrder() const { // Returns true if the customer didn't reach max orders
-    if (ordersId.size() >= maxOrders) {
+    if (static_cast<int>(ordersId.size()) >= maxOrders)
         return false;
-    }
     return true;
 }
 

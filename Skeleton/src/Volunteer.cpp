@@ -116,7 +116,7 @@ string CollectorVolunteer::toString() const {
 //LimitedCollector
 
 LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, string name, int coolDown ,int maxOrders)
-                : CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders) {
+                : CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders) {
 }
 
 LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const {
@@ -138,6 +138,11 @@ int LimitedCollectorVolunteer::getNumOrdersLeft() const {
     return ordersLeft;
 }
 
+bool LimitedCollectorVolunteer::hasOrdersLeft() const {
+    if (ordersLeft <= 0)
+        return true;
+    return false;
+}
 
 void LimitedCollectorVolunteer::acceptOrder(const Order &order) {
     CollectorVolunteer::acceptOrder(order);
@@ -248,7 +253,7 @@ int DriverVolunteer::getDistancePerStep() const {
 //#TODO Finish here limited driver methods, didn't finish
 
 LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders)
-                : DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(ordersLeft) { 
+                : DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders) { 
 }
 
 LimitedDriverVolunteer *LimitedDriverVolunteer::clone() const {
@@ -261,6 +266,19 @@ int LimitedDriverVolunteer::getMaxOrders() const {
 
 int LimitedDriverVolunteer::getNumOrdersLeft() const {
     return ordersLeft;
+}
+
+//#TODO: Probably will change this, too many checks, check if i need to delete him here if reached max order
+bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const {
+    if (DriverVolunteer::canTakeOrder(order) && hasOrdersLeft())
+        return true;
+    return false;
+}
+
+bool LimitedDriverVolunteer::hasOrdersLeft() const {
+    if (ordersLeft <= 0)
+        return true;
+    return false;
 }
 
 string LimitedDriverVolunteer::toString() const {
@@ -280,4 +298,9 @@ string LimitedDriverVolunteer::toString() const {
     }
     s += "\r\nordersLeft: " + ordersLeft; 
     return s;
+}
+
+void LimitedDriverVolunteer::acceptOrder(const Order &order) {
+    DriverVolunteer::acceptOrder(order);
+    ordersLeft -= 1;
 }

@@ -2,170 +2,301 @@
 #include <iostream>
 #include "Action.h"
 
-void Action::complete() {
+void Action::complete()
+{
     status = ActionStatus::COMPLETED;
 }
 
-void Action::error(string errorMsg) {
+void Action::error(string errorMsg)
+{
     status = ActionStatus::ERROR;
     this->errorMsg = errorMsg;
     std::cout << "Error:" + errorMsg << std::endl;
 }
 
-string Action::getErrorMsg() const {
+string Action::getErrorMsg() const
+{
     return errorMsg;
 }
 
-ActionStatus Action::getStatus() const {
+ActionStatus Action::getStatus() const
+{
     return status;
 }
 
-SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {
+SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
+{
 }
 
-void SimulateStep::act(WareHouse &wareHouse) {
+void SimulateStep::act(WareHouse &wareHouse)
+{
     for (int i = 0; i < numOfSteps; i++) {
-        for (Volunteer *volunteer : wareHouse.getVolunteers()) { // part(3) 
+        for (Volunteer *volunteer : wareHouse.getVolunteers()) { // part(3)
             volunteer->step(); // part (2)
             if (volunteer->hasFinishedOrder()) {
-                //volunteer->acceptOrder();     // part (2) and (1) #TODO: Do a method that gets the most needed to finish order, easy
-                AddOrder(getActiveOrderId()); // part (1), Updates to the correct vector of orders
+                volunteer->acceptOrder(wareHouse.getNextOrder(volunteer)); // part (2) and (1)
+                AddOrder(volunteer->getActiveOrderId()); // part (1), Updates to the correct vector of orders
                 if (!volunteer->hasOrdersLeft()) { // part(4)
-                    // DELETE THE BITCH
+                    wareHouse.DeleteLimitedVolunteer(volunteer);
                 }
             }
         }
     }
+    complete();
+    wareHouse.addAction(this);
 }
 
-SimulateStep* SimulateStep::clone() const {
+SimulateStep *SimulateStep::clone() const
+{
     return new SimulateStep(*this);
 }
 
-AddOrder::AddOrder(int id) : customerId(id) {
+string SimulateStep::toString() const
+{
+    return "simulateStep " + numOfSteps;
 }
-void AddOrder::act(WareHouse &wareHouse) {
+
+AddOrder::AddOrder(int id) : customerId(id)
+{
+}
+void AddOrder::act(WareHouse &wareHouse)
+{
     Customer &c = wareHouse.getCustomer(customerId);
-    if (c.getId() == 0 || !c.canMakeOrder()) {
-         // don't know how to check if didn't find customer (id = 0?\null?), #TODO: add default return
+    if (c.getId() == 0 || !c.canMakeOrder())
+    {
+        // don't know how to check if didn't find customer (id = 0?\null?), #TODO: add default return
         error("Cannot place this order");
+        wareHouse.addAction(this);
         return;
     }
 
     wareHouse.setOrderCounter(wareHouse.getOrderCounter() + 1);
     Order *o = new Order(wareHouse.getOrderCounter(), customerId, c.getCustomerDistance());
     wareHouse.getPendingOrders().push_back(o);
+    complete();
+    wareHouse.addAction(this);
 }
 
-AddOrder* AddOrder::clone() const {
+string AddOrder::toString() const
+{
+    return "order " + customerId;
+}
+
+AddOrder *AddOrder::clone() const
+{
     return new AddOrder(*this);
 }
 
 AddCustomer::AddCustomer(string customerName, CustomerType customerType, int distance, int maxOrders)
-    : customerName(customerName), customerType(customerType), distance(distance), maxOrders(maxOrders) {
+    : customerName(customerName), customerType(customerType), distance(distance), maxOrders(maxOrders)
+{
 }
 
-void AddCustomer::act(WareHouse &wareHouse) {
+string AddCustomer::toString() const
+{
+    string s = "customer " + customerName + " ";
+    if (customerType == CustomerType::Civilian)
+        s += "civilian";
+    else
+        s += "soldier";
+    s += " " + std::to_string(distance) + " " + std::to_string(maxOrders);
+    return s;
+}
+
+void AddCustomer::act(WareHouse &wareHouse)
+{
     wareHouse.setCustomerCounter(wareHouse.getCustomerCounter() + 1);
     Customer *c = nullptr;
     if (customerType == CustomerType::Soldier)
         c = new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
     else
         c = new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
+    wareHouse.getCustomers().push_back(c);
+    complete();
+    wareHouse.addAction(this);
 }
 
-AddCustomer* AddCustomer::clone() const {
+AddCustomer *AddCustomer::clone() const
+{
     return new AddCustomer(*this);
 }
 
-PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {
+PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
+{
 }
 
-void PrintOrderStatus::act(WareHouse &wareHouse) {
+void PrintOrderStatus::act(WareHouse &wareHouse)
+{
 
-    if (wareHouse.getOrderCounter() < orderId) {
+    if (wareHouse.getOrderCounter() < orderId)
+    {
         std::cout << "Order doesn't exist" << std::endl;
+        wareHouse.addAction(this);
         return;
     }
 
     Order order = wareHouse.getOrder(orderId);
     std::cout << order.toString() << std::endl;
+    complete();
+    wareHouse.addAction(this);
 }
 
-PrintOrderStatus* PrintOrderStatus::clone() const {
+string PrintOrderStatus::toString() const
+{
+    return "printOrderStatus " + orderId;
+}
+
+PrintOrderStatus *PrintOrderStatus::clone() const
+{
     return new PrintOrderStatus(*this);
 }
 
-PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId) {   
+PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId)
+{
 }
 
-void PrintCustomerStatus::act(WareHouse &wareHouse) {
-    if (wareHouse.getCustomerCounter() < customerId) {
+void PrintCustomerStatus::act(WareHouse &wareHouse)
+{
+    if (wareHouse.getCustomerCounter() < customerId)
+    {
         std::cout << "Customer doesn't exist" << std::endl;
+        wareHouse.addAction(this);
         return;
     }
     std::cout << "CustomerID: " + customerId << std::endl;
 
-    for (int orderId : wareHouse.getCustomer(customerId).getOrdersIds()) {
+    for (int orderId : wareHouse.getCustomer(customerId).getOrdersIds())
+    {
         Order order = wareHouse.getOrder(orderId);
         std::cout << order.toString() << std::endl;
     }
 
     int numOrdersLeft = wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getOrdersIds().size();
     std::cout << "numOrdersLeft: " + numOrdersLeft << std::endl;
+    complete();
+    wareHouse.addAction(this);
 }
 
-PrintCustomerStatus* PrintCustomerStatus::clone() const {
+string PrintCustomerStatus::toString() const
+{
+    return "printCustomerStatus " + customerId;
+}
+
+PrintCustomerStatus *PrintCustomerStatus::clone() const
+{
     return new PrintCustomerStatus(*this);
 }
 
-PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) {
+PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
+{
 }
 
-void PrintVolunteerStatus::act(WareHouse &wareHouse) {
-    if (wareHouse.getVolunteerCounter() < volunteerId) {
+void PrintVolunteerStatus::act(WareHouse &wareHouse)
+{
+    if (wareHouse.getVolunteerCounter() < volunteerId)
+    {
         std::cout << "Volunteer doesn't exist" << std::endl;
+        wareHouse.addAction(this);
         return;
     }
 
     Volunteer &v = wareHouse.getVolunteer(volunteerId);
     std::cout << v.toString() << std::endl;
+    complete();
+    wareHouse.addAction(this);
 }
 
-PrintVolunteerStatus* PrintVolunteerStatus::clone() const {
+string PrintVolunteerStatus::toString() const
+{
+    return "printVolunteerStatus " + volunteerId;
+}
+
+PrintVolunteerStatus *PrintVolunteerStatus::clone() const
+{
     return new PrintVolunteerStatus(*this);
 }
 
-void PrintActionsLog::act(WareHouse &wareHouse) {
-    //checking if i can update this by commit
-    return;
+void PrintActionsLog::act(WareHouse &wareHouse)
+{
+    string s;
+    for (Action *a : wareHouse.getActions())
+    {
+        if (a->getStatus() == ActionStatus::COMPLETED)
+            s = "Completed";
+        else
+            s = "Error: " + getErrorMsg();
+        std::cout << a->toString() + s << std::endl;
+    }
+    complete();
 }
 
-PrintActionsLog* PrintActionsLog::clone() const {
+string PrintActionsLog::toString() const
+{
+    return "printActionLog";
+}
+
+PrintActionsLog *PrintActionsLog::clone() const
+{
     return new PrintActionsLog(*this);
 }
 
-void BackupWareHouse::act(WareHouse &wareHouse) {
+void BackupWareHouse::act(WareHouse &wareHouse)
+{
     extern WareHouse *backup;
-    if (backup != nullptr) {
+    if (backup != nullptr)
+    {
         delete (backup);
     }
     backup = new WareHouse(wareHouse);
     complete();
+    wareHouse.addAction(this);
 }
-BackupWareHouse* BackupWareHouse::clone() const {
+
+string BackupWareHouse::toString() const
+{
+    return "backupWareHouse";
+}
+
+BackupWareHouse *BackupWareHouse::clone() const
+{
     return new BackupWareHouse(*this);
 }
 
-void RestoreWareHouse::act(WareHouse &wareHouse) {
-    if (backup == nullptr) {
+void RestoreWareHouse::act(WareHouse &wareHouse)
+{
+    if (backup == nullptr)
+    {
         error("Backup does not exist");
-    } else{
+    }
+    else
+    {
         wareHouse = *backup;
         complete();
+        wareHouse.addAction(this);
     }
 }
 
-RestoreWareHouse* RestoreWareHouse::clone() const {
+string RestoreWareHouse::toString() const
+{
+    return "restoreWareHouse";
+}
+
+RestoreWareHouse *RestoreWareHouse::clone() const
+{
     return new RestoreWareHouse(*this);
+}
+
+void Close::act(WareHouse &WareHouse)
+{
+    return;
+}
+
+string Close::toString() const
+{
+    return "close";
+}
+
+Close *Close::clone() const
+{
+    return new Close(*this);
 }
