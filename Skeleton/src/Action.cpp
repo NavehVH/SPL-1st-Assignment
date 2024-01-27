@@ -113,6 +113,7 @@ void AddCustomer::act(WareHouse &wareHouse)
         c = new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
     else
         c = new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
+    wareHouse.getCustomers().push_back(c);
     complete();
     wareHouse.addAction(this);
 }

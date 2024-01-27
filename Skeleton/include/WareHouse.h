@@ -37,13 +37,14 @@ public:
     int getCustomerCounter();
     void setCustomerCounter(int customerCounter);
     int getVolunteerCounter();
-    Order &getNextOrder(Volunteer *v) const;
-    void DeleteLimitedVolunteer(Volunteer *v) const;
+    Order &getNextOrder(Volunteer *v);
+    void DeleteLimitedVolunteer(Volunteer *v);
     
     vector<Order *> &getPendingOrders(); // added by myself
     vector<Order *> &getInProcessOrders();
     vector<Order *> &getCompletedOrders();
     vector<Volunteer *> &getVolunteers();
+    vector<Customer *> &getCustomers();
 
 private:
     void processFile(std::ifstream& inFile);
