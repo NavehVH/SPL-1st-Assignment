@@ -1,11 +1,11 @@
 {
     "version": "0.2.0",
     "configurations": [
-    {
-        "name": "C++ Launch",
+        {
+        "name": "Linux",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/bin/main",
+        "program": "${workspaceFolder}/bin/warehouse",
         "args": ["configFileExample.txt"],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
@@ -17,10 +17,10 @@
                 "description": "Enable pretty-printing for gdb",
                 "text": "-enable-pretty-printing",
                 "ignoreFailures": true
-            }
+            },
         ],
-        "preLaunchTask": "build",
-        "miDebuggerArgs": "/usr/bin/gbd"
+        //"preLaunchTask": "make",
+        "miDebuggerPath": "/usr/bin/gdb"
     }
-]
+],
 }

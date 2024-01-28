@@ -12,7 +12,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(SRCS))
 
 # Name of the executable
-TARGET = $(BIN_DIR)/main
+TARGET = $(BIN_DIR)/warehouse
 
 .PHONY: all clean
 

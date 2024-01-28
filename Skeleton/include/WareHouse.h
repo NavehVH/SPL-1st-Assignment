@@ -33,9 +33,9 @@ public:
     void close();
     void open();
     int getOrderCounter();
-    void setOrderCounter(int orderCounter);
+    void setOrderCounter(int orderC);
     int getCustomerCounter();
-    void setCustomerCounter(int customerCounter);
+    void setCustomerCounter(int customerC);
     int getVolunteerCounter();
     Order &getNextOrder(Volunteer *v);
     void DeleteLimitedVolunteer(Volunteer *v);
