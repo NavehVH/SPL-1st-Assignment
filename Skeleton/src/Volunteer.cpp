@@ -3,7 +3,7 @@
 
 class WareHouse;
 
-Volunteer::Volunteer(int id, const string &name): id(id), name(name) {}
+Volunteer::Volunteer(int id, const string &name): completedOrderId(NO_VOLUNTEER), activeOrderId(NO_VOLUNTEER), id(id), name(name) {}
 
 int Volunteer::getId() const {
     return id;
@@ -14,16 +14,10 @@ const string &Volunteer::getName() const {
 }
 
 int Volunteer::getActiveOrderId() const {
-    if (activeOrderId == 0) {
-        return NO_ORDER;
-    }
     return activeOrderId;
 }
 
 int Volunteer::getCompletedOrderId() const {
-    if (completedOrderId == 0) {
-        return NO_ORDER;
-    }
     return completedOrderId;
 }
 
@@ -34,7 +28,7 @@ bool Volunteer::isBusy() const {
 }
 
 bool Volunteer::hasFinishedOrder() const {
-    if (activeOrderId == completedOrderId && activeOrderId != NO_ORDER) {
+    if (activeOrderId == completedOrderId) {
         return true;
     }
     return false;
@@ -42,7 +36,7 @@ bool Volunteer::hasFinishedOrder() const {
 
 //CollectorVolunteer
 
-CollectorVolunteer::CollectorVolunteer(int id, string name, int coolDown): Volunteer(id, name), coolDown(coolDown) {
+CollectorVolunteer::CollectorVolunteer(int id, string name, int coolDown): Volunteer(id, name), coolDown(coolDown), timeLeft(0) {
 }
 
 CollectorVolunteer *CollectorVolunteer::clone() const {
@@ -79,7 +73,7 @@ int CollectorVolunteer::getTimeLeft() const {
 
 //#TODO: Probably will change this, too many checks
 bool CollectorVolunteer::canTakeOrder(const Order &order) const {
-    if (!isBusy() && timeLeft == 0 && order.getStatus() == OrderStatus::PENDING)
+    if (!isBusy() && timeLeft <= 0 && order.getStatus() == OrderStatus::PENDING)
         return true;
     return false;
 }
@@ -172,7 +166,7 @@ string LimitedCollectorVolunteer::toString() const {
 
 //DriverVolunteer
 DriverVolunteer::DriverVolunteer(int id, string name, int maxDistance, int distancePerStep)
-                : Volunteer(id, name), maxDistance(maxDistance), distancePerStep(distancePerStep) {
+                : Volunteer(id, name), maxDistance(maxDistance), distancePerStep(distancePerStep), distanceLeft(0) {
 }
 
 DriverVolunteer *DriverVolunteer::clone() const {

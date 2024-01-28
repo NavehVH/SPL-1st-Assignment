@@ -7,7 +7,7 @@ using std::string;
 using std::vector;
 
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) 
-                : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders) {   
+                : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders), ordersId() {   
 }
 
 const string &Customer::getName() const {

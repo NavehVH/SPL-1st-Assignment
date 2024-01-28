@@ -29,6 +29,7 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 }
 
 void SimulateStep::act(WareHouse &wareHouse)
+
 {
     for (int i = 0; i < numOfSteps; i++) {
         for (Volunteer *volunteer : wareHouse.getVolunteers()) { // part(3)
@@ -61,18 +62,23 @@ AddOrder::AddOrder(int id) : customerId(id)
 }
 void AddOrder::act(WareHouse &wareHouse)
 {
+    if (customerId >= wareHouse.getCustomerCounter() || customerId < 0)
+    {
+        error("Cannot place this order");
+        wareHouse.addAction(this);
+        return;
+    }
     Customer &c = wareHouse.getCustomer(customerId);
-    if (c.getId() == 0 || !c.canMakeOrder())
+    if (c.getId() < 0 || !c.canMakeOrder())
     {
         // don't know how to check if didn't find customer (id = 0?\null?), #TODO: add default return
         error("Cannot place this order");
         wareHouse.addAction(this);
         return;
     }
-
-    wareHouse.setOrderCounter(wareHouse.getOrderCounter() + 1);
     Order *o = new Order(wareHouse.getOrderCounter(), customerId, c.getCustomerDistance());
     wareHouse.getPendingOrders().push_back(o);
+    wareHouse.setOrderCounter(wareHouse.getOrderCounter() + 1);
     complete();
     wareHouse.addAction(this);
 }
@@ -105,13 +111,13 @@ string AddCustomer::toString() const
 
 void AddCustomer::act(WareHouse &wareHouse)
 {
-    wareHouse.setCustomerCounter(wareHouse.getCustomerCounter() + 1);
     Customer *c = nullptr;
     if (customerType == CustomerType::Soldier)
         c = new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
     else
         c = new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
     wareHouse.getCustomers().push_back(c);
+    wareHouse.setCustomerCounter(wareHouse.getCustomerCounter() + 1);
     complete();
     wareHouse.addAction(this);
 }

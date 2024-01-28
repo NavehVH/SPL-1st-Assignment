@@ -26,8 +26,6 @@ void Order::setStatus(OrderStatus status) {
 }
 
 int Order::getCollectorId() const {
-    if (collectorId == 0) //no id?
-        return NO_VOLUNTEER;
     return collectorId;
 }
 

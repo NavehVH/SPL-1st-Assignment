@@ -11,12 +11,13 @@
 #include <algorithm>
 #include <utility>
 
-WareHouse::WareHouse(const string &configFilePath)
+WareHouse::WareHouse(const string &configFilePath):  isOpen(false), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0), orderCounter(0) 
 {
     std::ifstream file(configFilePath);
     if (file.is_open())
     {
         std::cout << "Successfully opened file" << std::endl;
+
         processFile(file);
         std::cout << "WareHouse is open" << std::endl;
         open();
@@ -29,23 +30,7 @@ WareHouse::WareHouse(const string &configFilePath)
     }
 }
 
-WareHouse::WareHouse(WareHouse &&other) noexcept
-    : isOpen(other.isOpen), actionsLog(std::move(other.actionsLog)),
-        volunteers(std::move(other.volunteers)),
-      pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)),
-      completedOrders(std::move(other.completedOrders)), customers(std::move(other.customers)), orderCounter(other.orderCounter), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter)
-{
-
-    other.actionsLog.clear();
-    other.volunteers.clear();
-    other.pendingOrders.clear();
-    other.inProcessOrders.clear();
-    other.completedOrders.clear();
-    other.customers.clear();
-}
-
-WareHouse::WareHouse(const WareHouse &other) : orderCounter(other.orderCounter), volunteerCounter(other.volunteerCounter),
-                                               customerCounter(other.customerCounter), isOpen(other.isOpen)
+WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter)
 {
 
     for (const Action *a : other.actionsLog)
@@ -148,6 +133,21 @@ WareHouse &WareHouse::operator=(const WareHouse &other)
     return *this;
 }
 
+WareHouse::WareHouse(WareHouse &&other) noexcept
+    : isOpen(other.isOpen), actionsLog(std::move(other.actionsLog)),
+      volunteers(std::move(other.volunteers)),
+      pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)),
+      completedOrders(std::move(other.completedOrders)), customers(std::move(other.customers)), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter)
+{
+
+    other.actionsLog.clear();
+    other.volunteers.clear();
+    other.pendingOrders.clear();
+    other.inProcessOrders.clear();
+    other.completedOrders.clear();
+    other.customers.clear();
+}
+
 WareHouse &WareHouse::operator=(WareHouse &&other) noexcept
 {
     if (this != &other)
@@ -243,14 +243,14 @@ WareHouse::~WareHouse()
 
 Order &WareHouse::getNextOrder(Volunteer *v)
 {
-    if (typeid(v) == typeid(CollectorVolunteer) || typeid(v) == typeid(LimitedCollectorVolunteer))
+    if (typeid(*v) == typeid(CollectorVolunteer) || typeid(*v) == typeid(LimitedCollectorVolunteer))
     {
         for (Order *o : pendingOrders)
             if (o->getStatus() == OrderStatus::PENDING)
                 return *o;
     }
 
-    if (typeid(v) == typeid(DriverVolunteer) || typeid(v) == typeid(LimitedDriverVolunteer))
+    if (typeid(*v) == typeid(DriverVolunteer) || typeid(*v) == typeid(LimitedDriverVolunteer))
     {
         for (Order *o : inProcessOrders)
             if (o->getStatus() == OrderStatus::COLLECTING)
@@ -283,17 +283,16 @@ void WareHouse::processFile(std::ifstream &inFile)
             iss >> name >> type >> distance >> maxOrders;
             if (type == "soldier")
             {
-                SoldierCustomer *soldierCustomer = new SoldierCustomer(customerCounter, name, distance, maxOrders);
-                customers.push_back(soldierCustomer);
+                AddCustomer a = AddCustomer(name, CustomerType::Soldier, distance, maxOrders);
+                a.act(*this);
             }
-            else
+            else if (type == "civilian")
             {
-                CivilianCustomer *civilianCustomer = new CivilianCustomer(customerCounter, name, distance, maxOrders);
-                customers.push_back(civilianCustomer);
+                AddCustomer a = AddCustomer(name, CustomerType::Civilian, distance, maxOrders);
+                a.act(*this);
             }
-            customerCounter++;
-        }
-        else
+        }   
+        else if (firstWord == "volunteer")
         {
             iss >> name >> type;
             if (type == "limited_collector")
@@ -317,7 +316,7 @@ void WareHouse::processFile(std::ifstream &inFile)
                 volunteers.push_back(limitedDriverVolunteer);
                 volunteerCounter++;
             }
-            else
+            else if (type == "driver")
             {
                 iss >> maxDistance >> distancePerStep;
                 DriverVolunteer *driverVolunteer = new DriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep);
@@ -365,7 +364,8 @@ vector<Order *> &WareHouse::getPendingOrders()
     return pendingOrders;
 }
 
-vector<Customer *> &WareHouse::getCustomers() {
+vector<Customer *> &WareHouse::getCustomers()
+{
     return customers;
 }
 
@@ -380,7 +380,7 @@ Order &WareHouse::getOrder(int orderId) const
     for (Order *o : completedOrders)
         if (o->getId() == orderId)
             return *o;
-    
+
     throw std::out_of_range("No object found");
 }
 
@@ -391,7 +391,7 @@ int WareHouse::getOrderCounter()
 
 int WareHouse::getCustomerCounter()
 {
-    return orderCounter;
+    return customerCounter;
 }
 
 int WareHouse::getVolunteerCounter()
@@ -458,17 +458,17 @@ void WareHouse::start()
             iss >> name >> type >> distance >> maxOrders;
             if (type == "soldier")
             {
-                SoldierCustomer *soldierCustomer = new SoldierCustomer(customerCounter, name, distance, maxOrders);
-                customers.push_back(soldierCustomer);
+                AddCustomer a = AddCustomer(name, CustomerType::Soldier, distance, maxOrders);
+                a.act(*this);
             }
             else
             {
-                CivilianCustomer *civilianCustomer = new CivilianCustomer(customerCounter, name, distance, maxOrders);
-                customers.push_back(civilianCustomer);
+                AddCustomer a = AddCustomer(name, CustomerType::Civilian, distance, maxOrders);
+                a.act(*this);
             }
-            customerCounter++;
+            
         }
-        else if (firstWord == "OrderStatus")
+        else if (firstWord == "orderStatus")
         {
             int orderId;
             iss >> orderId;
@@ -514,4 +514,14 @@ void WareHouse::start()
             std::cout << "Invalid input" << std::endl;
         }
     }
+}
+
+void WareHouse::setCustomerCounter(int counter)
+{
+    customerCounter = counter;
+}
+
+void WareHouse::setOrderCounter(int counter)
+{
+    orderCounter = counter;
 }
