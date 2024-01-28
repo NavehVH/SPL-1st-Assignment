@@ -5,7 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-<<<<<<< HEAD
             "name": "linux",
             "type": "cppdbg",
             "request": "launch",
@@ -29,27 +28,4 @@
         }
 
     ]
-=======
-        "name": "Linux",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/bin/warehouse",
-        "args": ["configFileExample.txt"],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-            {
-                "description": "Enable pretty-printing for gdb",
-                "text": "-enable-pretty-printing",
-                "ignoreFailures": true
-            },
-        ],
-        //"preLaunchTask": "make",
-        "miDebuggerPath": "/usr/bin/gdb"
-    }
-],
->>>>>>> c5f57f4fda3d5ab41a937f23df01cafb0924a383
 }

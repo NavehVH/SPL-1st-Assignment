@@ -9,9 +9,6 @@
         }
     ],
     "files.associations": {
-<<<<<<< HEAD
-        "string": "cpp"
-=======
         "string_view": "cpp",
         "stdexcept": "cpp",
         "string": "cpp",
@@ -58,6 +55,5 @@
         "sstream": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp"
->>>>>>> c5f57f4fda3d5ab41a937f23df01cafb0924a383
     }
 }
