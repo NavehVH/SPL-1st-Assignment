@@ -404,6 +404,14 @@ void WareHouse::open()
     isOpen = true;
 }
 
+void WareHouse::setCustomerCounter(int counter) {
+    customerCounter = counter;
+}
+
+void WareHouse::setOrderCounter(int counter) {
+    orderCounter = counter;
+}
+
 void WareHouse::addOrder(Order *order)
 {
     if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
@@ -452,7 +460,7 @@ void WareHouse::start()
             addOrder.act(*this);
         }
         else if (firstWord == "customer")
-        {
+        { //wth is this
             string name, type;
             int distance, maxOrders;
             iss >> name >> type >> distance >> maxOrders;

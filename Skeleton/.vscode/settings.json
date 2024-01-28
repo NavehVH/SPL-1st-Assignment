@@ -1,5 +1,63 @@
 {
+    "C_Cpp.errorSquiggles": "disabled",
+    "makefile.makefilePath": "/workspaces/SPL-1st-Assinment/Skeleton/Makefile",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/workspaces/SPL-1st-Assinment/Skeleton/bin",
+            "binaryPath": "/workspaces/SPL-1st-Assinment/Skeleton/bin/warehouse",
+            "binaryArgs": []
+        }
+    ],
     "files.associations": {
+<<<<<<< HEAD
         "string": "cpp"
+=======
+        "string_view": "cpp",
+        "stdexcept": "cpp",
+        "string": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "new": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp",
+        "array": "cpp",
+        "atomic": "cpp",
+        "bit": "cpp",
+        "*.tcc": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "cstdarg": "cpp",
+        "cstddef": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cwchar": "cpp",
+        "cwctype": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "exception": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "memory": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "initializer_list": "cpp",
+        "istream": "cpp",
+        "limits": "cpp",
+        "numbers": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp",
+        "typeinfo": "cpp"
+>>>>>>> c5f57f4fda3d5ab41a937f23df01cafb0924a383
     }
 }
