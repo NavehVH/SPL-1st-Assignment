@@ -29,7 +29,8 @@ public:
     void setDriverId(int driverId);       
     string enumToString(OrderStatus e) const;
     int getCollectorId() const;
-    int getDriverId() const;       
+    int getDriverId() const;
+
     OrderStatus getStatus() const; 
     const string toString() const;
 
@@ -40,4 +41,5 @@ private:
     OrderStatus status;   
     int collectorId;      //Initialized to NO_VOLUNTEER if no collector has been assigned yet
     int driverId;         //Initialized to NO_VOLUNTEER if no driver has been assigned yet
+    bool finishedCollecting;
 };

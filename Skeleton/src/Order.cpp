@@ -2,11 +2,11 @@
 
 Order::Order(int id, int customerId, int distance)
                     : id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING),
-                     collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) { 
+                     collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER), finishedCollecting(false) { 
 }
 
 Order::Order(int id): id(id), customerId(-1), distance(-1), status(OrderStatus::PENDING),
-                     collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {}
+                     collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER), finishedCollecting(false) {}
 
 int Order::getId() const {
     return id;

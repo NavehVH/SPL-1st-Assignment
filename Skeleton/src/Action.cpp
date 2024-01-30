@@ -37,7 +37,7 @@ void SimulateStep::act(WareHouse &wareHouse)
             Order &o = wareHouse.getNextOrder(volunteer);
             std::cout << "DOING: orderId: " + std::to_string(o.getId()) + ", volunteerId: " + std::to_string(volunteer->getId()) + "" << std::endl;
             if (o.getId() == -1) {
-                delete &o;
+                delete &o; //#TODO: Check how to delete this correctly
                 continue;
             }
             if (volunteer->hasFinishedOrder() && volunteer->canTakeOrder(o)) {
