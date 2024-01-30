@@ -1,9 +1,10 @@
 #include <string>
-#include "Volunteer.h"
+#include "../include/Volunteer.h"
+#include <iostream>
 
 class WareHouse;
-
-Volunteer::Volunteer(int id, const string &name): completedOrderId(NO_VOLUNTEER), activeOrderId(NO_VOLUNTEER), id(id), name(name) {}
+Volunteer::Volunteer(int id): completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(-1), name("") {}
+Volunteer::Volunteer(int id, const string &name): completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(id), name(name) {}
 
 int Volunteer::getId() const {
     return id;
@@ -27,14 +28,18 @@ bool Volunteer::isBusy() const {
     return true;
 }
 
-bool Volunteer::hasFinishedOrder() const {
+bool Volunteer::hasFinishedOrder() {
     if (activeOrderId == completedOrderId) {
+        activeOrderId = NO_ORDER;
         return true;
     }
     return false;
 }
 
 //CollectorVolunteer
+
+CollectorVolunteer::CollectorVolunteer(int id): Volunteer(-1), coolDown(0), timeLeft(0) {
+}
 
 CollectorVolunteer::CollectorVolunteer(int id, string name, int coolDown): Volunteer(id, name), coolDown(coolDown), timeLeft(0) {
 }
@@ -61,7 +66,8 @@ int CollectorVolunteer::getCoolDown() const {
 //#TODO: Check if i need to limit this method if it gets to 0..
 bool CollectorVolunteer::decreaseCoolDown() {
     timeLeft -= 1;
-    if (timeLeft == 0) {
+    std::cout << "CALLED STEP ONCE! timeLeft: " + std::to_string(timeLeft) << std::endl;
+    if (timeLeft <= 0) {
         return true;
     }
     return false; 
@@ -79,9 +85,6 @@ bool CollectorVolunteer::canTakeOrder(const Order &order) const {
 }
 
 void CollectorVolunteer::acceptOrder(const Order &order) {
-    if (!CollectorVolunteer::canTakeOrder(order)) {
-        return;
-    }
     activeOrderId = order.getId();
     timeLeft = coolDown;
 }
@@ -92,10 +95,14 @@ string CollectorVolunteer::toString() const {
     if (isBusy()) {
         s += "True";
     } else {
-        s += "False"
-        "\r\nOrderID: " + activeOrderId;
+        s += "False";
     }
-    s += "timeLeft: ";
+    s += "\r\nOrderID: ";
+    if (activeOrderId < 0)
+        s += "None";
+    else
+        s += std::to_string(activeOrderId);
+    s += "\r\ntimeLeft: ";
     if (timeLeft == 0) {
         s += "None";
     } else {
@@ -133,7 +140,7 @@ int LimitedCollectorVolunteer::getNumOrdersLeft() const {
 }
 
 bool LimitedCollectorVolunteer::hasOrdersLeft() const {
-    if (ordersLeft <= 0)
+    if (ordersLeft > 0)
         return true;
     return false;
 }
@@ -149,10 +156,14 @@ string LimitedCollectorVolunteer::toString() const {
     if (isBusy()) {
         s += "True";
     } else {
-        s += "False"
-        "\r\nOrderID: " + activeOrderId;
+        s += "False";
     }
-    s += "timeLeft: ";
+     s += "\r\nOrderID: ";
+    if (activeOrderId < 0)
+        s += "None";
+    else
+        s += std::to_string(activeOrderId);
+    s += "\r\ntimeLeft: ";
     if (getTimeLeft() == 0) {
      
         s += "None";
@@ -193,30 +204,31 @@ bool DriverVolunteer::decreaseDistanceLeft() {
 
 //Will change this in the future (also can get pending orders? probably will know after setting collectorId correctly)
 bool DriverVolunteer::canTakeOrder(const Order &order) const {
-    if (!isBusy() && distanceLeft == 0 && order.getDistance() <= maxDistance && order.getStatus() == OrderStatus::COLLECTING) {
+    if (!isBusy() && distanceLeft <= 0 && order.getDistance() <= maxDistance && order.getStatus() == OrderStatus::COLLECTING) {
         return true;
     }
     return false;
 }
 
  void DriverVolunteer::acceptOrder(const Order &order) {
-    if (!DriverVolunteer::canTakeOrder(order)) {
-        return;
-    }
     activeOrderId = order.getId();
     distanceLeft = order.getDistance(); //#TODO: Check about this in the forum
 }
 
 string DriverVolunteer::toString() const {
-    string s = "VolunteerID " + std::to_string(getId()) + "\r\n"
+    string s = "VolunteerID: " + std::to_string(getId()) + "\r\n"
     "isBusy: ";
     if (isBusy()) {
         s += "True";
     } else {
-        s += "False"
-        "\r\nOrderID: " + activeOrderId;
+        s += "False";
     }
-    s += "distance_Left: ";
+     s += "\r\nOrderID: ";
+    if (activeOrderId < 0)
+        s += "None";
+    else
+        s += std::to_string(activeOrderId);
+    s += "\r\ndistance_Left: ";
     if (distanceLeft == 0) {
         s += "None";
     } else {
@@ -281,10 +293,14 @@ string LimitedDriverVolunteer::toString() const {
     if (isBusy()) {
         s += "True";
     } else {
-        s += "False"
-        "\r\nOrderID: " + activeOrderId;
+        s += "False";
     }
-    s += "distance_Left: ";
+     s += "\r\nOrderID: ";
+    if (activeOrderId < 0)
+        s += "None";
+    else
+        s += std::to_string(activeOrderId);
+    s += "\r\ndistance_Left: ";
     if (getDistanceLeft() == 0) {
         s += "None";
     } else {

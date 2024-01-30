@@ -1,9 +1,12 @@
-#include "Order.h"
+#include "../include/Order.h"
 
 Order::Order(int id, int customerId, int distance)
                     : id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING),
                      collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) { 
 }
+
+Order::Order(int id): id(id), customerId(-1), distance(-1), status(OrderStatus::PENDING),
+                     collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {}
 
 int Order::getId() const {
     return id;
@@ -34,8 +37,6 @@ void Order::setCollectorId(int collectorId) {
 }
 
 int Order::getDriverId() const {
-    if (driverId == 0) //no id?
-        return NO_VOLUNTEER;
     return driverId;
 }
 
@@ -55,6 +56,7 @@ string Order::enumToString(OrderStatus e) const {
         break;
     case OrderStatus::DELIVERING:
         text = "DELIVERING";
+        break;
     case OrderStatus::COMPLETED:
         text = "COMPLETED";
         break;
@@ -65,9 +67,9 @@ string Order::enumToString(OrderStatus e) const {
 
 //#TODO: Check if this is how they want toString to be declared or in a different way
 const string Order::toString() const {
-    string s = "CustomerID: " + std::to_string(customerId) + "\r\n"
-    "OrderId: " + std::to_string(id) + "\r\n"
+    string s = "OrderId: " + std::to_string(id) + "\r\n"
     "OrderStatus: " + enumToString(status) + "\r\n"
+    "CustomerID: " + std::to_string(customerId) + "\r\n"
     "Collector: ";
 
     if (collectorId == NO_VOLUNTEER)

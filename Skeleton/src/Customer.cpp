@@ -1,10 +1,14 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "Customer.h"
+#include "../include/Customer.h"
 
 using std::string;
 using std::vector;
+
+Customer::Customer(int id) 
+                : id(-1), name(""), locationDistance(0), maxOrders(0), ordersId() {   
+}
 
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) 
                 : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders), ordersId() {   
@@ -48,6 +52,10 @@ int Customer::addOrder(int orderId) {
     return -1;
 }
 
+SoldierCustomer::SoldierCustomer(int id)
+                   : Customer(id) {
+}
+
 SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int maxOrders)
                    : Customer(id, name, locationDistance, maxOrders) {
 }
@@ -55,6 +63,10 @@ SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int 
 
 SoldierCustomer *SoldierCustomer::clone() const {
     return new SoldierCustomer(*this);
+}
+
+CivilianCustomer::CivilianCustomer(int id)
+                   : Customer(id) {
 }
 
 CivilianCustomer::CivilianCustomer(int id, string name, int locationDistance, int maxOrders)

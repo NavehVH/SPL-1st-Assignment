@@ -1,8 +1,8 @@
-#include "Order.h"
-#include "Volunteer.h"
-#include "Customer.h"
-#include "Action.h"
-#include "WareHouse.h"
+#include "../include/Order.h"
+#include "../include/Volunteer.h"
+#include "../include/Customer.h"
+#include "../include/Action.h"
+#include "../include/WareHouse.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -243,6 +243,7 @@ WareHouse::~WareHouse()
 
 Order &WareHouse::getNextOrder(Volunteer *v)
 {
+    Order *emptyOrder = new Order(-1);
     if (typeid(*v) == typeid(CollectorVolunteer) || typeid(*v) == typeid(LimitedCollectorVolunteer))
     {
         for (Order *o : pendingOrders)
@@ -252,11 +253,15 @@ Order &WareHouse::getNextOrder(Volunteer *v)
 
     if (typeid(*v) == typeid(DriverVolunteer) || typeid(*v) == typeid(LimitedDriverVolunteer))
     {
+        for (Order *o : pendingOrders)
+            if (o->getStatus() == OrderStatus::COLLECTING)
+                return *o;
+
         for (Order *o : inProcessOrders)
             if (o->getStatus() == OrderStatus::COLLECTING)
                 return *o;
     }
-    throw std::out_of_range("No object found");
+    return *emptyOrder;
 }
 
 // not sure i did this correctly
@@ -264,9 +269,9 @@ void WareHouse::DeleteLimitedVolunteer(Volunteer *v)
 {
     if (std::find(volunteers.begin(), volunteers.end(), v) != volunteers.end())
     {
-        volunteers.erase(std::remove(volunteers.begin(), volunteers.end(), v), volunteers.end());
+        //volunteers.erase(std::remove(volunteers.begin(), volunteers.end(), v), volunteers.end());
     }
-    delete v;
+    //delete v;
 }
 
 void WareHouse::processFile(std::ifstream &inFile)
@@ -340,18 +345,20 @@ void WareHouse::addAction(Action *action)
 // Am I suppose to return null if not found? .-.
 Customer &WareHouse::getCustomer(int customerId) const
 {
+    SoldierCustomer *emptyCustomer = new SoldierCustomer(-1);
     for (Customer *c : customers)
         if (c->getId() == customerId)
             return *c;
-    throw std::out_of_range("No object found");
+    return *emptyCustomer;
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const
 {
+    CollectorVolunteer *emptyVolunteer = new CollectorVolunteer(-1);   
     for (Volunteer *v : volunteers)
         if (v->getId() == volunteerId)
             return *v;
-    throw std::out_of_range("No object found");
+    return *emptyVolunteer;
 }
 
 vector<Volunteer *> &WareHouse::getVolunteers()
@@ -371,6 +378,7 @@ vector<Customer *> &WareHouse::getCustomers()
 
 Order &WareHouse::getOrder(int orderId) const
 {
+    Order *emptyOrder = new Order(-1);
     for (Order *o : pendingOrders)
         if (o->getId() == orderId)
             return *o;
@@ -381,7 +389,7 @@ Order &WareHouse::getOrder(int orderId) const
         if (o->getId() == orderId)
             return *o;
 
-    throw std::out_of_range("No object found");
+    return *emptyOrder;
 }
 
 int WareHouse::getOrderCounter()
@@ -406,25 +414,32 @@ void WareHouse::open()
 
 void WareHouse::addOrder(Order *order)
 {
-    if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
-    {
-        if (order->getStatus() == OrderStatus::PENDING)
-        {
-            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
-            inProcessOrders.push_back(order);
-        }
-        else if (order->getStatus() == OrderStatus::DELIVERING)
-        {
-            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
-            completedOrders.push_back(order);
-        }
-    }
     if (std::find(inProcessOrders.begin(), inProcessOrders.end(), order) != inProcessOrders.end())
     {
         if (order->getStatus() == OrderStatus::DELIVERING)
         {
             inProcessOrders.erase(std::remove(inProcessOrders.begin(), inProcessOrders.end(), order), inProcessOrders.end());
             completedOrders.push_back(order);
+            order->setStatus(OrderStatus::COMPLETED);
+        }
+        else if (order->getStatus() == OrderStatus::COLLECTING) {
+            order->setStatus(OrderStatus::DELIVERING);
+            std::cout << "ITS DELIVERING!" << std::endl;
+        }
+    }
+    else if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
+    {
+        if (order->getStatus() == OrderStatus::DELIVERING)
+        {
+            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
+            completedOrders.push_back(order);
+            order->setStatus(OrderStatus::COMPLETED);
+        }
+        else if (order->getStatus() == OrderStatus::PENDING)
+        {
+            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
+            inProcessOrders.push_back(order);
+            order->setStatus(OrderStatus::COLLECTING);
         }
     }
 }
@@ -436,6 +451,7 @@ void WareHouse::start()
         string userInput, firstWord;
         std::getline(std::cin, userInput);
         std::istringstream iss(userInput);
+        std::cout << "" << std::endl; //just empty line
         iss >> firstWord;
         if (firstWord == "step")
         {
@@ -513,6 +529,7 @@ void WareHouse::start()
         {
             std::cout << "Invalid input" << std::endl;
         }
+        std::cout << "" << std::endl; //just empty line
     }
 }
 

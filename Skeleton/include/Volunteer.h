@@ -10,6 +10,7 @@ using std::vector;
 
 class Volunteer {
     public:
+        Volunteer(int id);
         Volunteer(int id, const string &name);
         virtual ~Volunteer() {};
         int getId() const; //d
@@ -18,7 +19,7 @@ class Volunteer {
         int getCompletedOrderId() const; //d
         bool isBusy() const; //d Signal whether the volunteer is currently processing an order    
         virtual bool hasOrdersLeft() const = 0; //d Signal whether the volunteer didn't reach orders limit,Always true for CollectorVolunteer and DriverVolunteer
-        bool hasFinishedOrder() const;
+        bool hasFinishedOrder();
         virtual bool canTakeOrder(const Order &order) const = 0; //d Signal if the volunteer can take the order.      
         virtual void acceptOrder(const Order &order) = 0; //d Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
                 
@@ -41,6 +42,7 @@ class Volunteer {
 class CollectorVolunteer: public Volunteer {
 
     public:
+        CollectorVolunteer(int id);
         CollectorVolunteer(int id, string name, int coolDown); //d
         CollectorVolunteer *clone() const override; //d
         void step() override; //d

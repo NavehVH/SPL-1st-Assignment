@@ -1,5 +1,5 @@
 {
-    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.errorSquiggles": "enabled",
     "makefile.makefilePath": "/workspaces/SPL-1st-Assinment/Skeleton/Makefile",
     "makefile.launchConfigurations": [
         {
@@ -54,6 +54,7 @@
         "numbers": "cpp",
         "sstream": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "optional": "cpp"
     }
 }
