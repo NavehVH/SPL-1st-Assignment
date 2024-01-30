@@ -41,6 +41,9 @@ void SimulateStep::act(WareHouse &wareHouse)
                 continue;
             }
             if (volunteer->hasFinishedOrder() && volunteer->canTakeOrder(o)) {
+                if (typeid(*volunteer) == typeid(DriverVolunteer) || typeid(*volunteer) == typeid(LimitedDriverVolunteer))
+                    if (wareHouse.getVolunteer(o.getCollectorId()).getCompletedOrderId() != wareHouse.getVolunteer(o.getCollectorId()).getActiveOrderId())
+                        continue;
                 volunteer->acceptOrder(o); // part (2) and (1)
                 wareHouse.addOrder(&o); // part (1), Updates to the correct vector of orders
                 if (o.getStatus() == OrderStatus::COLLECTING)
