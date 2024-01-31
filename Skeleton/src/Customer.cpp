@@ -6,6 +6,9 @@
 using std::string;
 using std::vector;
 
+Customer::Customer() : id(-1), name(""), locationDistance(-1), maxOrders(-1), ordersId() {
+}
+
 Customer::Customer(int id) 
                 : id(-1), name(""), locationDistance(0), maxOrders(0), ordersId() {   
 }
@@ -52,6 +55,9 @@ int Customer::addOrder(int orderId) {
     return -1;
 }
 
+SoldierCustomer::SoldierCustomer() : Customer() {    
+}
+
 SoldierCustomer::SoldierCustomer(int id)
                    : Customer(id) {
 }
@@ -63,6 +69,9 @@ SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int 
 
 SoldierCustomer *SoldierCustomer::clone() const {
     return new SoldierCustomer(*this);
+}
+
+CivilianCustomer::CivilianCustomer() : Customer() { 
 }
 
 CivilianCustomer::CivilianCustomer(int id)

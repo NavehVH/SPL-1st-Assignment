@@ -8,6 +8,7 @@ class Order;
 
 class Customer {
 public:
+    Customer();
     Customer(int id);
     Customer(int id, const string &name, int locationDistance, int maxOrders);
     virtual ~Customer() {};
@@ -31,6 +32,7 @@ private:
 
 class SoldierCustomer : public Customer {
 public:
+    SoldierCustomer();
     SoldierCustomer(int id);
     SoldierCustomer(int id, string name, int locationDistance, int maxOrders);
     SoldierCustomer *clone() const override;
@@ -40,6 +42,7 @@ private:
 
 class CivilianCustomer : public Customer {
 public:
+    CivilianCustomer();
     CivilianCustomer(int id);
     CivilianCustomer(int id, string name, int locationDistance, int maxOrders);
     CivilianCustomer *clone() const override;

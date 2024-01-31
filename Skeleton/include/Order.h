@@ -18,6 +18,7 @@ enum class OrderStatus {
 class Order {
 
 public:
+    Order();
     Order(int id);
     Order(int id, int customerId, int distance);
     virtual ~Order() {};

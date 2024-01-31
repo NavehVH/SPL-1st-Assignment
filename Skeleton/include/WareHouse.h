@@ -39,7 +39,7 @@ public:
     int getVolunteerCounter();
     Order &getNextOrder(Volunteer *v);
     void DeleteLimitedVolunteer(Volunteer *v);
-    
+    void moveFromProcessToPending (Volunteer& volunteer);
     vector<Order *> &getPendingOrders(); // added by myself
     vector<Order *> &getInProcessOrders();
     vector<Order *> &getCompletedOrders();

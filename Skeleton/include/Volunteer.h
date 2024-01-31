@@ -10,6 +10,7 @@ using std::vector;
 
 class Volunteer {
     public:
+        Volunteer();
         Volunteer(int id);
         Volunteer(int id, const string &name);
         virtual ~Volunteer() {};
@@ -42,6 +43,7 @@ class Volunteer {
 class CollectorVolunteer: public Volunteer {
 
     public:
+        CollectorVolunteer();
         CollectorVolunteer(int id);
         CollectorVolunteer(int id, string name, int coolDown); //d
         CollectorVolunteer *clone() const override; //d

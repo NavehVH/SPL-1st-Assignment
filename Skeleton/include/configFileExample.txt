@@ -1,0 +1,11 @@
+# Customers - customer <customer_name> <customer_type> <customer_distance> <max_orders>
+
+customer Moshe soldier 3 2              # Example of a soldier customer called Moshe, distance=3, maxOrders=2
+customer Ron civilian 2 1               # Example of a civilian customer called Ron, distance=2, maxOrders=1
+
+# Volunteers - volunteer <volunteer_name> <volunteer_role> <volunteer_coolDown>/<volunteer_maxDistance> <distance_per_step>(for drivers only) <volunteer_maxOrders>(optional)
+
+volunteer Tamar collector 2             # Example of a collector, coolDown=2, maxOrders is unlimited
+volunteer Ron limited_collector 3 2     # Example of a limited collector, coolDown=3, maxOrders=2
+volunteer Tal driver 7 4                # Example of a driver, maxDistance=7, distance_per_step=4, maxOrders is unlimited
+volunteer Din limited_driver 3 2 3      # Example of a limited driver, maxDistance=3, distance_per_step=2, maxOrders=3

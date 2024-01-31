@@ -3,8 +3,14 @@
 #include <iostream>
 
 class WareHouse;
-Volunteer::Volunteer(int id): completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(-1), name("") {}
-Volunteer::Volunteer(int id, const string &name): completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(id), name(name) {}
+Volunteer::Volunteer() :  completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(-1), name("") {
+}
+
+Volunteer::Volunteer(int id): completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(-1), name("") { 
+}
+
+Volunteer::Volunteer(int id, const string &name): completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(id), name(name) {  
+}
 
 int Volunteer::getId() const {
     return id;
@@ -37,6 +43,8 @@ bool Volunteer::hasFinishedOrder() {
 }
 
 //CollectorVolunteer
+CollectorVolunteer::CollectorVolunteer() : Volunteer(), coolDown(-1), timeLeft(-1) {
+}
 
 CollectorVolunteer::CollectorVolunteer(int id): Volunteer(-1), coolDown(0), timeLeft(0) {
 }
