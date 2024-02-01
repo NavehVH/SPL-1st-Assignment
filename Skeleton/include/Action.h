@@ -22,7 +22,7 @@ class Action {
 
 public:
     Action(): errorMsg(""), status(ActionStatus::ERROR)  {};
-    virtual ~Action(){};
+    virtual ~Action() {};
     ActionStatus getStatus() const;
     virtual void act(WareHouse &wareHouse) = 0;
     virtual string toString() const = 0;
