@@ -37,6 +37,10 @@ const vector<int> &Customer::getOrdersIds() const { // Returns verctor of orders
     return ordersId;
 }
 
+void Customer::PushToOrdersIds(int id) {
+    ordersId.push_back(id);
+}
+
 int Customer::getNumOrders() const { // Returns num of orders the customer has made so far
     return ordersId.size();
 }

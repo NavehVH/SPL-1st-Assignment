@@ -25,6 +25,8 @@ class Volunteer {
         virtual void acceptOrder(const Order &order) = 0; //d Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
                 
         virtual void step() = 0; //d Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
+        void setActiveOrderId(int orderId);
+        void setCompletedOrderId(int orderId);
 
         virtual string toString() const = 0; //d
         virtual Volunteer* clone() const = 0; //d Return a copy of the volunteer

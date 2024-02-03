@@ -31,28 +31,48 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 void SimulateStep::act(WareHouse &wareHouse)
 
 {
-    for (int i = 0; i < numOfSteps; i++) {
-        for (Volunteer *volunteer : wareHouse.getVolunteers()) { // part(3)
-            volunteer->step(); // part (2)
-            Order &o = wareHouse.getNextOrder(volunteer);
-            std::cout << "DOING: orderId: " + std::to_string(o.getId()) + ", volunteerId: " + std::to_string(volunteer->getId()) + "" << std::endl;
-            if (volunteer->hasFinishedOrder() && volunteer->canTakeOrder(o)) {
-                wareHouse.moveFromProcessToPending(*volunteer);
-                volunteer->acceptOrder(o); // part (2) and (1)
-                wareHouse.addOrder(&o); // part (1), Updates to the correct vector of orders
-                if (o.getStatus() == OrderStatus::COLLECTING)
-                    o.setCollectorId(volunteer->getId());
-                if (o.getStatus() == OrderStatus::DELIVERING)
-                    o.setDriverId(volunteer->getId());
-                if (!volunteer->hasOrdersLeft()) { // part(4)
-                    wareHouse.DeleteLimitedVolunteer(volunteer);
+    for (int i = 0; i < numOfSteps; i++)
+    {
+        for (Order *o : wareHouse.getPendingOrders()) // step (1)
+        {
+            for (Volunteer *v : wareHouse.getVolunteers())
+            {
+                if (v->hasFinishedOrder() && v->canTakeOrder(*o))
+                {
+                    v->acceptOrder(*o);
+                    wareHouse.addOrder(o);
+                    if (o->getStatus() == OrderStatus::COLLECTING)
+                        o->setCollectorId(v->getId());
+                    if (o->getStatus() == OrderStatus::DELIVERING)
+                        o->setDriverId(v->getId());
+                    break;
                 }
+            }
+        }
+
+        for (Volunteer *v : wareHouse.getVolunteers()) // step (2)
+            v->step();
+
+        for (Volunteer *v : wareHouse.getVolunteers()) // step (3)
+        {
+            if (v->hasFinishedOrder())
+            {
+                Order *o = &wareHouse.getOrder(v->getActiveOrderId());
+                if (v->getActiveOrderId() == -1 || o->getId() == -1)
+                    continue;
+                wareHouse.setOrder(o);
+                v->setActiveOrderId(NO_ORDER);
+            }
+            if (!v->hasOrdersLeft()) // step (4)
+            {
+                wareHouse.DeleteLimitedVolunteer(v);
             }
         }
     }
     complete();
     wareHouse.addAction(this);
 }
+
 SimulateStep *SimulateStep::clone() const
 {
     return new SimulateStep(*this);
@@ -82,6 +102,7 @@ void AddOrder::act(WareHouse &wareHouse)
         return;
     }
     Order *o = new Order(wareHouse.getOrderCounter(), customerId, c.getCustomerDistance());
+    c.PushToOrdersIds(o->getId());
     wareHouse.getPendingOrders().push_back(o);
     wareHouse.setOrderCounter(wareHouse.getOrderCounter() + 1);
     complete();
@@ -138,7 +159,8 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
 
 void PrintOrderStatus::act(WareHouse &wareHouse)
 {
-    if (orderId >= wareHouse.getOrderCounter() || orderId < 0) {
+    if (orderId >= wareHouse.getOrderCounter() || orderId < 0)
+    {
         std::cout << "Order doesn't exist" << std::endl;
         wareHouse.addAction(this);
         return;
@@ -171,7 +193,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
         wareHouse.addAction(this);
         return;
     }
-    std::cout << "CustomerID: " + customerId << std::endl;
+    std::cout << "CustomerID: " + std::to_string(customerId) << std::endl;
 
     for (int orderId : wareHouse.getCustomer(customerId).getOrdersIds())
     {
@@ -180,7 +202,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     }
 
     int numOrdersLeft = wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getOrdersIds().size();
-    std::cout << "numOrdersLeft: " + numOrdersLeft << std::endl;
+    std::cout << "numOrdersLeft: " + std::to_string(numOrdersLeft) << std::endl;
     complete();
     wareHouse.addAction(this);
 }
@@ -201,7 +223,8 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-    if (volunteerId >= wareHouse.getVolunteerCounter() || volunteerId < 0) {
+    if (volunteerId >= wareHouse.getVolunteerCounter() || volunteerId < 0)
+    {
         std::cout << "Volunteer doesn't exist" << std::endl;
         wareHouse.addAction(this);
         return;
@@ -292,8 +315,16 @@ RestoreWareHouse *RestoreWareHouse::clone() const
     return new RestoreWareHouse(*this);
 }
 
-void Close::act(WareHouse &WareHouse)
+void Close::act(WareHouse &wareHouse)
 {
+    for (Customer *c : wareHouse.getCustomers())
+    {
+        for (int orderId : c->getOrdersIds())
+        {
+            Order order = wareHouse.getOrder(orderId);
+            std::cout << order.toString() << std::endl;
+        }
+    }
     exit(1);
 }
 

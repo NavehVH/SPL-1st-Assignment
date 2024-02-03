@@ -25,6 +25,7 @@ public:
     void start();
     const vector<Action *> &getActions() const; //d
     void addOrder(Order *order);
+    void setOrder(Order *order);
     void addAction(Action *action);
     void printActionsLogs();
     Customer &getCustomer(int customerId) const; //d
@@ -37,9 +38,7 @@ public:
     int getCustomerCounter();
     void setCustomerCounter(int customerC);
     int getVolunteerCounter();
-    Order &getNextOrder(Volunteer *v);
     void DeleteLimitedVolunteer(Volunteer *v);
-    void moveFromProcessToPending (Volunteer& volunteer);
     vector<Order *> &getPendingOrders(); // added by myself
     vector<Order *> &getInProcessOrders();
     vector<Order *> &getCompletedOrders();

@@ -21,6 +21,7 @@ public:
     const vector<int> &getOrdersIds() const;
     int addOrder(int orderId); // return OrderId if order was added successfully, -1 otherwise
     virtual Customer *clone() const = 0; // Return a copy of the customer
+    void PushToOrdersIds(int id);
 
 private:
     const int id;

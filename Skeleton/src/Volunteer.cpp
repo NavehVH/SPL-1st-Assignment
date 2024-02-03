@@ -24,8 +24,16 @@ int Volunteer::getActiveOrderId() const {
     return activeOrderId;
 }
 
+void Volunteer::setActiveOrderId(int orderId) {
+    activeOrderId = orderId;
+}
+
 int Volunteer::getCompletedOrderId() const {
     return completedOrderId;
+}
+
+void Volunteer::setCompletedOrderId(int orderId) {
+    completedOrderId = orderId;
 }
 
 bool Volunteer::isBusy() const {
@@ -35,10 +43,8 @@ bool Volunteer::isBusy() const {
 }
 
 bool Volunteer::hasFinishedOrder() {
-    if (activeOrderId == completedOrderId) {
-        activeOrderId = NO_ORDER;
+    if (activeOrderId == completedOrderId)
         return true;
-    }
     return false;
 }
 
@@ -74,7 +80,6 @@ int CollectorVolunteer::getCoolDown() const {
 //#TODO: Check if i need to limit this method if it gets to 0..
 bool CollectorVolunteer::decreaseCoolDown() {
     timeLeft -= 1;
-    std::cout << "CALLED STEP ONCE! timeLeft: " + std::to_string(timeLeft) << std::endl;
     if (timeLeft <= 0) {
         return true;
     }
@@ -178,7 +183,7 @@ string LimitedCollectorVolunteer::toString() const {
     } else {
         s += std::to_string(getTimeLeft());
     }
-    s += "\r\nordersLeft: " + ordersLeft; 
+    s += "\r\nordersLeft: " + std::to_string(ordersLeft); 
     return s;
     //return "id: " + std::to_string(getId()) + ", name: " + getName() + ", completedOrderId: " + std::to_string(getCompletedOrderId()) + ", activeOrderId: " + std::to_string(getActiveOrderId()) + ", coolDown: " + std::to_string(getCoolDown()) + ", timeLeft: " + std::to_string(getTimeLeft()); 
 }
@@ -314,7 +319,7 @@ string LimitedDriverVolunteer::toString() const {
     } else {
         s += std::to_string(getDistanceLeft());
     }
-    s += "\r\nordersLeft: " + ordersLeft; 
+    s += "\r\nordersLeft: " + std::to_string(ordersLeft); 
     return s;
 }
 
