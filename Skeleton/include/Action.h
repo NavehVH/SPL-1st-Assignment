@@ -21,8 +21,8 @@ enum class CustomerType {
 class Action {
 
 public:
-    Action(): errorMsg(""), status(ActionStatus::ERROR)  {};
-    virtual ~Action() {};
+    Action() : errorMsg(""), status(ActionStatus::ERROR){};
+    virtual ~Action() = default;
     ActionStatus getStatus() const;
     virtual void act(WareHouse &wareHouse) = 0;
     virtual string toString() const = 0;

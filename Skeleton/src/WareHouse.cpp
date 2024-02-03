@@ -72,36 +72,42 @@ WareHouse &WareHouse::operator=(const WareHouse &other)
         for (Action *a : actionsLog)
         {
             delete a;
+            a = nullptr;
         }
         actionsLog.clear();
 
         for (Volunteer *v : volunteers)
         {
             delete v;
+            v = nullptr;
         }
         volunteers.clear();
 
         for (Order *o : pendingOrders)
         {
             delete o;
+            o = nullptr;
         }
         pendingOrders.clear();
 
         for (Order *o : inProcessOrders)
         {
             delete o;
+            o = nullptr;
         }
         inProcessOrders.clear();
 
         for (Order *o : completedOrders)
         {
             delete o;
+            o = nullptr;
         }
         completedOrders.clear();
 
         for (Customer *c : customers)
         {
             delete c;
+            c = nullptr;
         }
         customers.clear();
 
@@ -399,57 +405,57 @@ void WareHouse::start()
         {
             int numberOfSteps;
             iss >> numberOfSteps;
-            SimulateStep simulateStep(numberOfSteps);
-            simulateStep.act(*this);
+            SimulateStep* simulateStep = new SimulateStep(numberOfSteps);
+            simulateStep->act(*this);
         }
         else if (firstWord == "order")
         {
             int customerId;
             iss >> customerId;
-            AddOrder addOrder(customerId);
-            addOrder.act(*this);
+            AddOrder* addOrder = new AddOrder (customerId);
+            addOrder->act(*this);
         }
         else if (firstWord == "customer")
-        { // wth is this
+        {
             string name, type;
             int distance, maxOrders;
             iss >> name >> type >> distance >> maxOrders;
             if (type == "soldier")
             {
-                AddCustomer a = AddCustomer(name, CustomerType::Soldier, distance, maxOrders);
-                a.act(*this);
+                AddCustomer* addCustomer = new AddCustomer(name, CustomerType::Soldier, distance, maxOrders);
+                addCustomer->act(*this);
             }
             else
             {
-                AddCustomer a = AddCustomer(name, CustomerType::Civilian, distance, maxOrders);
-                a.act(*this);
+                AddCustomer* addCustomer = new AddCustomer(name, CustomerType::Civilian, distance, maxOrders);
+                addCustomer->act(*this);
             }
         }
         else if (firstWord == "orderStatus")
         {
             int orderId;
             iss >> orderId;
-            PrintOrderStatus printOrderStatus(orderId);
-            printOrderStatus.act(*this);
+            PrintOrderStatus* printOrderStatus = new PrintOrderStatus(orderId);
+            printOrderStatus->act(*this);
         }
         else if (firstWord == "customerStatus")
         {
             int customerId;
             iss >> customerId;
-            PrintCustomerStatus printCustomerStatus(customerId);
-            printCustomerStatus.act(*this);
+            PrintCustomerStatus* printCustomerStatus = new PrintCustomerStatus (customerId);
+            printCustomerStatus->act(*this);
         }
         else if (firstWord == "volunteerStatus")
         {
             int volunteerId;
             iss >> volunteerId;
-            PrintVolunteerStatus printVolunteerStatus(volunteerId);
-            printVolunteerStatus.act(*this);
+            PrintVolunteerStatus* printVolunteerStatus = new PrintVolunteerStatus(volunteerId);
+            printVolunteerStatus->act(*this);
         }
         else if (firstWord == "log")
         {
-            PrintActionsLog printActionsLog;
-            printActionsLog.act(*this);
+            PrintActionsLog* printActionsLog = new PrintActionsLog;
+            printActionsLog->act(*this);
         }
         else if (firstWord == "close")
         {
@@ -458,13 +464,13 @@ void WareHouse::start()
         }
         else if (firstWord == "backup")
         {
-            BackupWareHouse backupWareHouse;
-            backupWareHouse.act(*this);
+            BackupWareHouse* backupWareHouse = new BackupWareHouse;
+            backupWareHouse->act(*this);
         }
         else if (firstWord == "restore")
         {
-            RestoreWareHouse restoreWareHouse;
-            restoreWareHouse.act(*this);
+            RestoreWareHouse* restoreWareHouse = new RestoreWareHouse;
+            restoreWareHouse->act(*this);
         }
         else
         {
@@ -472,6 +478,9 @@ void WareHouse::start()
         }
         std::cout << "" << std::endl; // just empty line
     }
+}
+void WareHouse::setIsOpen(bool open) {
+    isOpen = open;
 }
 
 void WareHouse::setCustomerCounter(int counter)
