@@ -17,7 +17,6 @@ WareHouse::WareHouse(const string &configFilePath) : isOpen(false), actionsLog()
     if (file.is_open())
     {
         processFile(file);
-        std::cout << "WareHouse is open!" << std::endl;
         open();
         start();
     }
@@ -195,29 +194,26 @@ void WareHouse::start()
 {
     while (isOpen)
     {
-        string userInput, firstWord;
+        string userInput, firstWord, name, type;
+        int numberOfSteps, customerId, distance, maxOrders, orderId, volunteerId;
         std::getline(std::cin, userInput);
         std::istringstream iss(userInput);
         std::cout << "" << std::endl; // just empty line
         iss >> firstWord;
         if (firstWord == "step")
         {
-            int numberOfSteps;
             iss >> numberOfSteps;
             SimulateStep* simulateStep = new SimulateStep(numberOfSteps);
             simulateStep->act(*this);
         }
         else if (firstWord == "order")
         {
-            int customerId;
             iss >> customerId;
             AddOrder* addOrder = new AddOrder (customerId);
             addOrder->act(*this);
         }
         else if (firstWord == "customer")
         {
-            string name, type;
-            int distance, maxOrders;
             iss >> name >> type >> distance >> maxOrders;
             if (type == "soldier")
             {
@@ -232,21 +228,18 @@ void WareHouse::start()
         }
         else if (firstWord == "orderStatus")
         {
-            int orderId;
             iss >> orderId;
             PrintOrderStatus* printOrderStatus = new PrintOrderStatus(orderId);
             printOrderStatus->act(*this);
         }
         else if (firstWord == "customerStatus")
         {
-            int customerId;
             iss >> customerId;
             PrintCustomerStatus* printCustomerStatus = new PrintCustomerStatus (customerId);
             printCustomerStatus->act(*this);
         }
         else if (firstWord == "volunteerStatus")
         {
-            int volunteerId;
             iss >> volunteerId;
             PrintVolunteerStatus* printVolunteerStatus = new PrintVolunteerStatus(volunteerId);
             printVolunteerStatus->act(*this);
@@ -276,6 +269,17 @@ void WareHouse::start()
             std::cout << "Invalid input" << std::endl;
         }
         std::cout << "" << std::endl; // just empty line
+        userInput.clear();
+        firstWord.clear();
+        name.clear();
+        type.clear();
+        numberOfSteps = -1;
+        customerId = -1;
+        distance = -1;
+        maxOrders = -1;
+        orderId = -1;
+        customerId = -1;
+        volunteerId = -1;
     }
 }
 
@@ -375,6 +379,7 @@ void WareHouse::close()
 void WareHouse::open()
 {
     isOpen = true;
+    std::cout << "WareHouse is open!" << std::endl;
 }
 
 int WareHouse::getOrderCounter()
@@ -409,6 +414,7 @@ void WareHouse::DeleteLimitedVolunteer(Volunteer *v)
         volunteers.erase(std::remove(volunteers.begin(), volunteers.end(), v), volunteers.end());
     }
     delete v;
+    v = nullptr;
 }
 
 vector<Order *> &WareHouse::getPendingOrders()
@@ -433,7 +439,7 @@ vector<Customer *> &WareHouse::getCustomers()
 
 void WareHouse::processFile(std::ifstream &inFile)
 {
-    std::string line, word, firstWord, name, type;
+    std::string line, firstWord, name, type;
     int coolDown, maxOrders, distance, maxDistance, distancePerStep;
     while (getline(inFile, line))
     {
@@ -453,6 +459,7 @@ void WareHouse::processFile(std::ifstream &inFile)
                 CivilianCustomer *civilianCustomer = new CivilianCustomer(customerCounter, name, distance, maxOrders);
                 customers.push_back(civilianCustomer);
                 customerCounter++;
+
             }
         }
         else if (firstWord == "volunteer")
@@ -487,6 +494,16 @@ void WareHouse::processFile(std::ifstream &inFile)
                 volunteerCounter++;
             }
         }
+        firstWord.clear();
+        name.clear();
+        type.clear();
+        coolDown = -1;
+        maxOrders = -1;
+        distance = -1;
+        maxDistance = -1;
+        distancePerStep = -1;
     }
     inFile.close();
 }
+
+

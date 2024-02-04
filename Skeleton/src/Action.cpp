@@ -35,7 +35,7 @@ void SimulateStep::act(WareHouse &wareHouse)
     {
         for (Order *o : wareHouse.getPendingOrders()) // step (1)
         {
-            for (Volunteer *v : wareHouse.getVolunteers())
+           for (Volunteer *v : wareHouse.getVolunteers())
             {
                 if (v->hasFinishedOrder() && v->canTakeOrder(*o))
                 {
@@ -129,8 +129,9 @@ void AddCustomer::act(WareHouse &wareHouse)
     Customer *c = nullptr;
     if (customerType == CustomerType::Soldier)
         c = new SoldierCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
-    else
+    else if (customerType == CustomerType::Civilian) {
         c = new CivilianCustomer(wareHouse.getCustomerCounter(), customerName, distance, maxOrders);
+    }
     wareHouse.getCustomers().push_back(c);
     wareHouse.setCustomerCounter(wareHouse.getCustomerCounter() + 1);
     complete();
@@ -162,7 +163,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
 {
     if (orderId >= wareHouse.getOrderCounter() || orderId < 0)
     {
-        std::cout << "Order doesn't exist" << std::endl;
+        error("Order doesn't exist");
         wareHouse.addAction(this);
         return;
     }
@@ -190,7 +191,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
 {
     if (customerId >= wareHouse.getCustomerCounter() || customerId < 0)
     {
-        std::cout << "Customer doesn't exist" << std::endl;
+        error("Customer doesn't exist");
         wareHouse.addAction(this);
         return;
     }
@@ -200,7 +201,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     {
         Order order = wareHouse.getOrder(orderId);
         std::cout << "OrderId: " + std::to_string(order.getId()) << std::endl;
-        std::cout << "OrderStatus " + order.enumToString(order.getStatus()) << std::endl;
+        std::cout << "OrderStatus: " + order.enumToString(order.getStatus()) << std::endl;
     }
 
     int numOrdersLeft = wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getOrdersIds().size();
@@ -227,11 +228,17 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
     if (volunteerId >= wareHouse.getVolunteerCounter() || volunteerId < 0)
     {
-        std::cout << "Volunteer doesn't exist" << std::endl;
+        error("Volunteer doesn't exist");
         wareHouse.addAction(this);
         return;
     }
     Volunteer &v = wareHouse.getVolunteer(volunteerId);
+    if (v.getId() == -1) 
+    {
+        error("Volunteer doesn't exist");
+        wareHouse.addAction(this);
+        return;
+    }
     std::cout << v.toString() << std::endl;
     complete();
     wareHouse.addAction(this);
@@ -255,7 +262,7 @@ void PrintActionsLog::act(WareHouse &wareHouse)
         if (a->getStatus() == ActionStatus::COMPLETED)
             s = " COMPLETED";
         else
-            s = " ERROR: " + getErrorMsg();
+            s = " ERROR" + getErrorMsg();
         std::cout << a->toString() + s + '\n';
     }
     complete();
@@ -325,7 +332,7 @@ void Close::act(WareHouse &wareHouse)
         for (int orderId : c->getOrdersIds())
         {
             Order order = wareHouse.getOrder(orderId);
-            std::cout << order.toString() << std::endl;
+            std::cout << "orderID: " << std::to_string(order.getId()) << ", CustomerID: " << std::to_string(order.getCustomerId()) << ", Status: " <<  order.enumToString(order.getStatus()) << std::endl;
         }
     }
     wareHouse.close();

@@ -44,7 +44,6 @@ public:
     vector<Order *> &getCompletedOrders();
     vector<Volunteer *> &getVolunteers();
     vector<Customer *> &getCustomers();
-
 private:
     void processFile(std::ifstream& inFile);
     bool isOpen;                    

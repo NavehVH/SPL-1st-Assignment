@@ -2,13 +2,13 @@
 #include <vector>
 #include <algorithm>
 #include "../include/Customer.h"
+#include <iostream>
 
 using std::string;
 using std::vector;
 
-Customer::Customer() : id(-1), name(""), locationDistance(-1), maxOrders(-1), ordersId() {
+Customer::Customer() : id(-1), name(""), locationDistance(-1), maxOrders(-1),  ordersId() {  
 }
-
 
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) 
                 : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders), ordersId() {   
@@ -35,8 +35,9 @@ int Customer::getNumOrders() const { // Returns num of orders the customer has m
 }
 
 bool Customer::canMakeOrder() const { // Returns true if the customer didn't reach max orders
-    if (static_cast<int>(ordersId.size()) >= maxOrders)
+    if (static_cast<int>(ordersId.size()) >= maxOrders) {
         return false;
+    }
     return true;
 }
 
