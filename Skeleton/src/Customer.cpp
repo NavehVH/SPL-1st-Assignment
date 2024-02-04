@@ -9,9 +9,6 @@ using std::vector;
 Customer::Customer() : id(-1), name(""), locationDistance(-1), maxOrders(-1), ordersId() {
 }
 
-Customer::Customer(int id) 
-                : id(-1), name(""), locationDistance(0), maxOrders(0), ordersId() {   
-}
 
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders) 
                 : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders), ordersId() {   
@@ -33,14 +30,6 @@ int Customer::getMaxOrders() const { // Returns maxOrders
     return maxOrders;
 }
 
-const vector<int> &Customer::getOrdersIds() const { // Returns verctor of orders IDs
-    return ordersId;
-}
-
-void Customer::PushToOrdersIds(int id) {
-    ordersId.push_back(id);
-}
-
 int Customer::getNumOrders() const { // Returns num of orders the customer has made so far
     return ordersId.size();
 }
@@ -51,7 +40,15 @@ bool Customer::canMakeOrder() const { // Returns true if the customer didn't rea
     return true;
 }
 
-//#TODO: Ask about this method, are u supposed to actually ADD or just check, if so, how to check\add correctly?
+const vector<int> &Customer::getOrdersIds() const { // Returns verctor of orders IDs
+    return ordersId;
+}
+
+void Customer::PushToOrdersIds(int id) {
+    ordersId.push_back(id);
+}
+
+
 int Customer::addOrder(int orderId) {
     if (std::find(getOrdersIds().begin(), getOrdersIds().end(), orderId) != getOrdersIds().end()) { //check if orderId is in verctor orderIds
         return orderId;
@@ -62,14 +59,9 @@ int Customer::addOrder(int orderId) {
 SoldierCustomer::SoldierCustomer() : Customer() {    
 }
 
-SoldierCustomer::SoldierCustomer(int id)
-                   : Customer(id) {
-}
-
 SoldierCustomer::SoldierCustomer(int id, string name, int locationDistance, int maxOrders)
                    : Customer(id, name, locationDistance, maxOrders) {
 }
-
 
 SoldierCustomer *SoldierCustomer::clone() const {
     return new SoldierCustomer(*this);
@@ -78,14 +70,9 @@ SoldierCustomer *SoldierCustomer::clone() const {
 CivilianCustomer::CivilianCustomer() : Customer() { 
 }
 
-CivilianCustomer::CivilianCustomer(int id)
-                   : Customer(id) {
-}
-
 CivilianCustomer::CivilianCustomer(int id, string name, int locationDistance, int maxOrders)
                    : Customer(id, name, locationDistance, maxOrders) { 
 }
-
 
 CivilianCustomer *CivilianCustomer::clone() const {
     return new CivilianCustomer(*this);

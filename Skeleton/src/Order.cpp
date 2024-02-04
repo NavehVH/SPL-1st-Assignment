@@ -9,9 +9,6 @@ Order::Order(int id, int customerId, int distance)
                      collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) { 
 }
 
-Order::Order(int id): id(id), customerId(-1), distance(-1), status(OrderStatus::PENDING),
-                     collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {}
-
 int Order::getId() const {
     return id;
 }
@@ -24,28 +21,28 @@ int Order::getDistance() const {
     return distance;
 }
 
-OrderStatus Order::getStatus() const {
-    return status;
-}
-
 void Order::setStatus(OrderStatus status) {
     this->status = status;
-}
-
-int Order::getCollectorId() const {
-    return collectorId;
 }
 
 void Order::setCollectorId(int collectorId) {
     this->collectorId = collectorId;
 }
 
+void Order::setDriverId(int driverId) {
+    this->driverId = driverId;
+}
+
+int Order::getCollectorId() const {
+    return collectorId;
+}
+
 int Order::getDriverId() const {
     return driverId;
 }
 
-void Order::setDriverId(int driverId) {
-    this->driverId = driverId;
+OrderStatus Order::getStatus() const {
+    return status;
 }
 
 string Order::enumToString(OrderStatus e) const {
@@ -69,7 +66,6 @@ string Order::enumToString(OrderStatus e) const {
     return text;
 }
 
-//#TODO: Check if this is how they want toString to be declared or in a different way
 const string Order::toString() const {
     string s = "OrderId: " + std::to_string(id) + "\r\n"
     "OrderStatus: " + enumToString(status) + "\r\n"
@@ -87,5 +83,4 @@ const string Order::toString() const {
         s += std::to_string(driverId);
 
     return s;
-    //return "id: " + std::to_string(id) + ", customerId: " + std::to_string(customerId) + ", distance: " + std::to_string(distance) + ", status: " + enumToString(status) + ", collectorId: " + std::to_string(collectorId) + ", driverId: " + std::to_string(driverId);
 }

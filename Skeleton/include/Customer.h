@@ -9,7 +9,6 @@ class Order;
 class Customer {
 public:
     Customer();
-    Customer(int id);
     Customer(int id, const string &name, int locationDistance, int maxOrders);
     virtual ~Customer() {};
     const string &getName() const;
@@ -19,9 +18,10 @@ public:
     int getNumOrders() const;  // Returns num of orders the customer has made so far
     bool canMakeOrder() const; // Returns true if the customer didn't reach max orders
     const vector<int> &getOrdersIds() const;
+    void PushToOrdersIds(int id);
     int addOrder(int orderId); // return OrderId if order was added successfully, -1 otherwise
     virtual Customer *clone() const = 0; // Return a copy of the customer
-    void PushToOrdersIds(int id);
+    
 
 private:
     const int id;
@@ -34,7 +34,6 @@ private:
 class SoldierCustomer : public Customer {
 public:
     SoldierCustomer();
-    SoldierCustomer(int id);
     SoldierCustomer(int id, string name, int locationDistance, int maxOrders);
     SoldierCustomer *clone() const override;
 

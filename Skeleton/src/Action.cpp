@@ -2,6 +2,11 @@
 #include <iostream>
 #include "../include/Action.h"
 
+ActionStatus Action::getStatus() const
+{
+    return status;
+}
+
 void Action::complete()
 {
     status = ActionStatus::COMPLETED;
@@ -17,11 +22,6 @@ void Action::error(string errorMsg)
 string Action::getErrorMsg() const
 {
     return errorMsg;
-}
-
-ActionStatus Action::getStatus() const
-{
-    return status;
 }
 
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
@@ -109,14 +109,14 @@ void AddOrder::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string AddOrder::toString() const
-{
-    return "order " + std::to_string(customerId);
-}
-
 AddOrder *AddOrder::clone() const
 {
     return new AddOrder(*this);
+}
+
+string AddOrder::toString() const
+{
+    return "order " + std::to_string(customerId);
 }
 
 AddCustomer::AddCustomer(string customerName, CustomerType customerType, int distance, int maxOrders)
@@ -124,16 +124,6 @@ AddCustomer::AddCustomer(string customerName, CustomerType customerType, int dis
 {
 }
 
-string AddCustomer::toString() const
-{
-    string s = "customer " + customerName + " ";
-    if (customerType == CustomerType::Civilian)
-        s += "civilian";
-    else
-        s += "soldier";
-    s += " " + std::to_string(distance) + " " + std::to_string(maxOrders);
-    return s;
-}
 void AddCustomer::act(WareHouse &wareHouse)
 {
     Customer *c = nullptr;
@@ -151,6 +141,18 @@ AddCustomer *AddCustomer::clone() const
 {
     return new AddCustomer(*this);
 }
+
+string AddCustomer::toString() const
+{
+    string s = "customer " + customerName + " ";
+    if (customerType == CustomerType::Civilian)
+        s += "civilian";
+    else
+        s += "soldier";
+    s += " " + std::to_string(distance) + " " + std::to_string(maxOrders);
+    return s;
+}
+
 
 PrintOrderStatus::PrintOrderStatus(int id) : orderId(id)
 {
@@ -170,14 +172,14 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintOrderStatus::toString() const
-{
-    return "orderStatus " + orderId;
-}
-
 PrintOrderStatus *PrintOrderStatus::clone() const
 {
     return new PrintOrderStatus(*this);
+}
+
+string PrintOrderStatus::toString() const
+{
+    return "orderStatus " + std::to_string(orderId);
 }
 
 PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId)
@@ -198,7 +200,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     {
         Order order = wareHouse.getOrder(orderId);
         std::cout << "OrderId: " + std::to_string(order.getId()) << std::endl;
-        std::cout << "OrderStatus: " + order.enumToString(order.getStatus()) << std::endl;
+        std::cout << "OrderStatus " + order.enumToString(order.getStatus()) << std::endl;
     }
 
     int numOrdersLeft = wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getOrdersIds().size();
@@ -207,14 +209,14 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintCustomerStatus::toString() const
-{
-    return "customerStatus " + std::to_string(customerId);
-}
-
 PrintCustomerStatus *PrintCustomerStatus::clone() const
 {
     return new PrintCustomerStatus(*this);
+}
+
+string PrintCustomerStatus::toString() const
+{
+    return "customerStatus " + std::to_string(customerId);
 }
 
 PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
@@ -235,14 +237,14 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintVolunteerStatus::toString() const
-{
-    return "volunteerStatus " + std::to_string(volunteerId);
-}
-
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const
 {
     return new PrintVolunteerStatus(*this);
+}
+
+string PrintVolunteerStatus::toString() const
+{
+    return "volunteerStatus " + std::to_string(volunteerId);
 }
 
 void PrintActionsLog::act(WareHouse &wareHouse)
@@ -260,14 +262,14 @@ void PrintActionsLog::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string PrintActionsLog::toString() const
-{
-    return "log";
-}
-
 PrintActionsLog *PrintActionsLog::clone() const
 {
     return new PrintActionsLog(*this);
+}
+
+string PrintActionsLog::toString() const
+{
+    return "log";
 }
 
 void BackupWareHouse::act(WareHouse &wareHouse)
@@ -282,14 +284,14 @@ void BackupWareHouse::act(WareHouse &wareHouse)
     wareHouse.addAction(this);
 }
 
-string BackupWareHouse::toString() const
-{
-    return "backupWareHouse";
-}
-
 BackupWareHouse *BackupWareHouse::clone() const
 {
     return new BackupWareHouse(*this);
+}
+
+string BackupWareHouse::toString() const
+{
+    return "backupWareHouse";
 }
 
 void RestoreWareHouse::act(WareHouse &wareHouse)
@@ -306,14 +308,14 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
     }
 }
 
-string RestoreWareHouse::toString() const
-{
-    return "restoreWareHouse";
-}
-
 RestoreWareHouse *RestoreWareHouse::clone() const
 {
     return new RestoreWareHouse(*this);
+}
+
+string RestoreWareHouse::toString() const
+{
+    return "restoreWareHouse";
 }
 
 void Close::act(WareHouse &wareHouse)
@@ -326,15 +328,15 @@ void Close::act(WareHouse &wareHouse)
             std::cout << order.toString() << std::endl;
         }
     }
-    wareHouse.setIsOpen(false);
-}
-
-string Close::toString() const
-{
-    return "close";
+    wareHouse.close();
 }
 
 Close *Close::clone() const
 {
     return new Close(*this);
+}
+
+string Close::toString() const
+{
+    return "close";
 }

@@ -11,23 +11,20 @@ using std::vector;
 class Volunteer {
     public:
         Volunteer();
-        Volunteer(int id);
         Volunteer(int id, const string &name);
         virtual ~Volunteer() {};
-        int getId() const; //d
-        const string &getName() const; //d
-        int getActiveOrderId() const; //d
-        int getCompletedOrderId() const; //d
+        int getId() const;
+        const string &getName() const;
+        int getActiveOrderId() const;
+        int getCompletedOrderId() const;
+        void setActiveOrderId(int orderId);
+        void setCompletedOrderId(int orderId);
         bool isBusy() const; //d Signal whether the volunteer is currently processing an order    
         virtual bool hasOrdersLeft() const = 0; //d Signal whether the volunteer didn't reach orders limit,Always true for CollectorVolunteer and DriverVolunteer
         bool hasFinishedOrder();
         virtual bool canTakeOrder(const Order &order) const = 0; //d Signal if the volunteer can take the order.      
-        virtual void acceptOrder(const Order &order) = 0; //d Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
-                
+        virtual void acceptOrder(const Order &order) = 0; //d Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)          
         virtual void step() = 0; //d Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
-        void setActiveOrderId(int orderId);
-        void setCompletedOrderId(int orderId);
-
         virtual string toString() const = 0; //d
         virtual Volunteer* clone() const = 0; //d Return a copy of the volunteer
 
@@ -46,7 +43,6 @@ class CollectorVolunteer: public Volunteer {
 
     public:
         CollectorVolunteer();
-        CollectorVolunteer(int id);
         CollectorVolunteer(int id, string name, int coolDown); //d
         CollectorVolunteer *clone() const override; //d
         void step() override; //d

@@ -34,17 +34,16 @@ public:
     void close();
     void open();
     int getOrderCounter();
-    void setOrderCounter(int orderC);
     int getCustomerCounter();
-    void setCustomerCounter(int customerC);
     int getVolunteerCounter();
+    void setOrderCounter(int orderC);
+    void setCustomerCounter(int customerC);
     void DeleteLimitedVolunteer(Volunteer *v);
     vector<Order *> &getPendingOrders(); // added by myself
     vector<Order *> &getInProcessOrders();
     vector<Order *> &getCompletedOrders();
     vector<Volunteer *> &getVolunteers();
     vector<Customer *> &getCustomers();
-    void setIsOpen(bool open);
 
 private:
     void processFile(std::ifstream& inFile);

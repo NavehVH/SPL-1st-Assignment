@@ -19,7 +19,6 @@ class Order {
 
 public:
     Order();
-    Order(int id);
     Order(int id, int customerId, int distance);
     virtual ~Order() {};
     int getId() const;                   
@@ -28,11 +27,10 @@ public:
     void setStatus(OrderStatus status);   
     void setCollectorId(int collectorId); 
     void setDriverId(int driverId);       
-    string enumToString(OrderStatus e) const;
     int getCollectorId() const;
     int getDriverId() const;
-
     OrderStatus getStatus() const; 
+    string enumToString(OrderStatus e) const;
     const string toString() const;
 
 private:

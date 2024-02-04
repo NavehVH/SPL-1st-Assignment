@@ -16,10 +16,8 @@ WareHouse::WareHouse(const string &configFilePath) : isOpen(false), actionsLog()
     std::ifstream file(configFilePath);
     if (file.is_open())
     {
-        std::cout << "Successfully opened file" << std::endl;
-
         processFile(file);
-        std::cout << "WareHouse is open" << std::endl;
+        std::cout << "WareHouse is open!" << std::endl;
         open();
         start();
     }
@@ -193,7 +191,217 @@ WareHouse::~WareHouse()
     customers.clear();
 }
 
-// not sure i did this correctly
+void WareHouse::start()
+{
+    while (isOpen)
+    {
+        string userInput, firstWord;
+        std::getline(std::cin, userInput);
+        std::istringstream iss(userInput);
+        std::cout << "" << std::endl; // just empty line
+        iss >> firstWord;
+        if (firstWord == "step")
+        {
+            int numberOfSteps;
+            iss >> numberOfSteps;
+            SimulateStep* simulateStep = new SimulateStep(numberOfSteps);
+            simulateStep->act(*this);
+        }
+        else if (firstWord == "order")
+        {
+            int customerId;
+            iss >> customerId;
+            AddOrder* addOrder = new AddOrder (customerId);
+            addOrder->act(*this);
+        }
+        else if (firstWord == "customer")
+        {
+            string name, type;
+            int distance, maxOrders;
+            iss >> name >> type >> distance >> maxOrders;
+            if (type == "soldier")
+            {
+                AddCustomer* addCustomer = new AddCustomer(name, CustomerType::Soldier, distance, maxOrders);
+                addCustomer->act(*this);
+            }
+            else if (type == "civilian")
+            {
+                AddCustomer* addCustomer = new AddCustomer(name, CustomerType::Civilian, distance, maxOrders);
+                addCustomer->act(*this);
+            }
+        }
+        else if (firstWord == "orderStatus")
+        {
+            int orderId;
+            iss >> orderId;
+            PrintOrderStatus* printOrderStatus = new PrintOrderStatus(orderId);
+            printOrderStatus->act(*this);
+        }
+        else if (firstWord == "customerStatus")
+        {
+            int customerId;
+            iss >> customerId;
+            PrintCustomerStatus* printCustomerStatus = new PrintCustomerStatus (customerId);
+            printCustomerStatus->act(*this);
+        }
+        else if (firstWord == "volunteerStatus")
+        {
+            int volunteerId;
+            iss >> volunteerId;
+            PrintVolunteerStatus* printVolunteerStatus = new PrintVolunteerStatus(volunteerId);
+            printVolunteerStatus->act(*this);
+        }
+        else if (firstWord == "log")
+        {
+            PrintActionsLog* printActionsLog = new PrintActionsLog;
+            printActionsLog->act(*this);
+        }
+        else if (firstWord == "close")
+        {
+            Close close;
+            close.act(*this);
+        }
+        else if (firstWord == "backup")
+        {
+            BackupWareHouse* backupWareHouse = new BackupWareHouse;
+            backupWareHouse->act(*this);
+        }
+        else if (firstWord == "restore")
+        {
+            RestoreWareHouse* restoreWareHouse = new RestoreWareHouse;
+            restoreWareHouse->act(*this);
+        }
+        else
+        {
+            std::cout << "Invalid input" << std::endl;
+        }
+        std::cout << "" << std::endl; // just empty line
+    }
+}
+
+const vector<Action *> &WareHouse::getActions() const
+{
+    return actionsLog;
+}
+
+void WareHouse::addOrder(Order *order)
+{
+    if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
+    {
+        if (order->getStatus() == OrderStatus::PENDING)
+        {
+            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
+            inProcessOrders.push_back(order);
+            order->setStatus(OrderStatus::COLLECTING);
+        }
+        else if (order->getStatus() == OrderStatus::COLLECTING)
+        {
+            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
+            inProcessOrders.push_back(order);
+            order->setStatus(OrderStatus::DELIVERING);
+        }
+    }
+}
+
+void WareHouse::setOrder(Order *order)
+{
+    if (std::find(inProcessOrders.begin(), inProcessOrders.end(), order) != inProcessOrders.end())
+    {
+        if (order->getStatus() == OrderStatus::COLLECTING)
+        {
+            inProcessOrders.erase(std::remove(inProcessOrders.begin(), inProcessOrders.end(), order), inProcessOrders.end());
+            pendingOrders.push_back(order);
+        }
+        else if (order->getStatus() == OrderStatus::DELIVERING)
+        {
+            inProcessOrders.erase(std::remove(inProcessOrders.begin(), inProcessOrders.end(), order), inProcessOrders.end());
+            completedOrders.push_back(order);
+            order->setStatus(OrderStatus::COMPLETED);
+        }
+    }
+}
+
+void WareHouse::addAction(Action *action)
+{
+    actionsLog.push_back(action);
+}
+
+Customer &WareHouse::getCustomer(int customerId) const
+{
+    for (Customer *c : customers)
+    {
+        if (c->getId() == customerId)
+        {
+            return *c;
+        }
+    }
+    static CivilianCustomer civilianCustomerDefault;
+    return civilianCustomerDefault;
+}
+
+Volunteer &WareHouse::getVolunteer(int volunteerId) const
+{
+    for (Volunteer *v : volunteers)
+    {
+        if (v->getId() == volunteerId)
+        {
+            return *v;
+        }
+    }
+    static CollectorVolunteer CollectorVolunteerDefault;
+    return CollectorVolunteerDefault;
+}
+
+Order &WareHouse::getOrder(int orderId) const
+{
+    for (Order *o : pendingOrders)
+        if (o->getId() == orderId)
+            return *o;
+    for (Order *o : inProcessOrders)
+        if (o->getId() == orderId)
+            return *o;
+    for (Order *o : completedOrders)
+        if (o->getId() == orderId)
+            return *o;
+    static Order orderDefault;
+    return orderDefault;
+}
+
+void WareHouse::close()
+{
+    isOpen = false;
+}
+
+void WareHouse::open()
+{
+    isOpen = true;
+}
+
+int WareHouse::getOrderCounter()
+{
+    return orderCounter;
+}
+
+int WareHouse::getCustomerCounter()
+{
+    return customerCounter;
+}
+
+int WareHouse::getVolunteerCounter()
+{
+    return volunteerCounter;
+}
+
+void WareHouse::setOrderCounter(int counter)
+{
+    orderCounter = counter;
+}
+
+void WareHouse::setCustomerCounter(int counter)
+{
+    customerCounter = counter;
+}
+
 void WareHouse::DeleteLimitedVolunteer(Volunteer *v)
 {
     if (std::find(volunteers.begin(), volunteers.end(), v) != volunteers.end())
@@ -201,6 +409,26 @@ void WareHouse::DeleteLimitedVolunteer(Volunteer *v)
         volunteers.erase(std::remove(volunteers.begin(), volunteers.end(), v), volunteers.end());
     }
     delete v;
+}
+
+vector<Order *> &WareHouse::getPendingOrders()
+{
+    return pendingOrders;
+}
+
+vector<Order *> &WareHouse::getInProcessOrders()
+{
+    return inProcessOrders;
+}
+
+vector<Volunteer *> &WareHouse::getVolunteers()
+{
+    return volunteers;
+}
+
+vector<Customer *> &WareHouse::getCustomers()
+{
+    return customers;
 }
 
 void WareHouse::processFile(std::ifstream &inFile)
@@ -261,234 +489,4 @@ void WareHouse::processFile(std::ifstream &inFile)
         }
     }
     inFile.close();
-}
-
-const vector<Action *> &WareHouse::getActions() const
-{
-    return actionsLog;
-}
-
-void WareHouse::addAction(Action *action)
-{
-    actionsLog.push_back(action);
-}
-
-// Am I suppose to return null if not found? .-.
-Customer &WareHouse::getCustomer(int customerId) const
-{
-    for (Customer *c : customers)
-    {
-        if (c->getId() == customerId)
-        {
-            return *c;
-        }
-    }
-    static CivilianCustomer civilianCustomerDefault;
-    return civilianCustomerDefault;
-}
-
-Volunteer &WareHouse::getVolunteer(int volunteerId) const
-{
-    for (Volunteer *v : volunteers)
-    {
-        if (v->getId() == volunteerId)
-        {
-            return *v;
-        }
-    }
-    static CollectorVolunteer CollectorVolunteerDefault;
-    return CollectorVolunteerDefault;
-}
-
-vector<Volunteer *> &WareHouse::getVolunteers()
-{
-    return volunteers;
-}
-
-vector<Order *> &WareHouse::getPendingOrders()
-{
-    return pendingOrders;
-}
-
-vector<Order *> &WareHouse::getInProcessOrders()
-{
-    return inProcessOrders;
-}
-
-vector<Customer *> &WareHouse::getCustomers()
-{
-    return customers;
-}
-
-Order &WareHouse::getOrder(int orderId) const
-{
-    for (Order *o : pendingOrders)
-        if (o->getId() == orderId)
-            return *o;
-    for (Order *o : inProcessOrders)
-        if (o->getId() == orderId)
-            return *o;
-    for (Order *o : completedOrders)
-        if (o->getId() == orderId)
-            return *o;
-    static Order orderDefault;
-    return orderDefault;
-}
-
-int WareHouse::getOrderCounter()
-{
-    return orderCounter;
-}
-
-int WareHouse::getCustomerCounter()
-{
-    return customerCounter;
-}
-
-int WareHouse::getVolunteerCounter()
-{
-    return volunteerCounter;
-}
-
-void WareHouse::open()
-{
-    isOpen = true;
-}
-
-void WareHouse::addOrder(Order *order)
-{
-    if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
-    {
-        if (order->getStatus() == OrderStatus::PENDING)
-        {
-            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
-            inProcessOrders.push_back(order);
-            order->setStatus(OrderStatus::COLLECTING);
-        }
-        else if (order->getStatus() == OrderStatus::COLLECTING)
-        {
-            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
-            inProcessOrders.push_back(order);
-            order->setStatus(OrderStatus::DELIVERING);
-        }
-    }
-}
-
-void WareHouse::setOrder(Order *order)
-{
-    if (std::find(inProcessOrders.begin(), inProcessOrders.end(), order) != inProcessOrders.end())
-    {
-        if (order->getStatus() == OrderStatus::COLLECTING)
-        {
-            inProcessOrders.erase(std::remove(inProcessOrders.begin(), inProcessOrders.end(), order), inProcessOrders.end());
-            pendingOrders.push_back(order);
-        }
-        else if (order->getStatus() == OrderStatus::DELIVERING)
-        {
-            inProcessOrders.erase(std::remove(inProcessOrders.begin(), inProcessOrders.end(), order), inProcessOrders.end());
-            completedOrders.push_back(order);
-            order->setStatus(OrderStatus::COMPLETED);
-        }
-    }
-}
-
-void WareHouse::start()
-{
-    while (isOpen)
-    {
-        string userInput, firstWord;
-        std::getline(std::cin, userInput);
-        std::istringstream iss(userInput);
-        std::cout << "" << std::endl; // just empty line
-        iss >> firstWord;
-        if (firstWord == "step")
-        {
-            int numberOfSteps;
-            iss >> numberOfSteps;
-            SimulateStep* simulateStep = new SimulateStep(numberOfSteps);
-            simulateStep->act(*this);
-        }
-        else if (firstWord == "order")
-        {
-            int customerId;
-            iss >> customerId;
-            AddOrder* addOrder = new AddOrder (customerId);
-            addOrder->act(*this);
-        }
-        else if (firstWord == "customer")
-        {
-            string name, type;
-            int distance, maxOrders;
-            iss >> name >> type >> distance >> maxOrders;
-            if (type == "soldier")
-            {
-                AddCustomer* addCustomer = new AddCustomer(name, CustomerType::Soldier, distance, maxOrders);
-                addCustomer->act(*this);
-            }
-            else
-            {
-                AddCustomer* addCustomer = new AddCustomer(name, CustomerType::Civilian, distance, maxOrders);
-                addCustomer->act(*this);
-            }
-        }
-        else if (firstWord == "orderStatus")
-        {
-            int orderId;
-            iss >> orderId;
-            PrintOrderStatus* printOrderStatus = new PrintOrderStatus(orderId);
-            printOrderStatus->act(*this);
-        }
-        else if (firstWord == "customerStatus")
-        {
-            int customerId;
-            iss >> customerId;
-            PrintCustomerStatus* printCustomerStatus = new PrintCustomerStatus (customerId);
-            printCustomerStatus->act(*this);
-        }
-        else if (firstWord == "volunteerStatus")
-        {
-            int volunteerId;
-            iss >> volunteerId;
-            PrintVolunteerStatus* printVolunteerStatus = new PrintVolunteerStatus(volunteerId);
-            printVolunteerStatus->act(*this);
-        }
-        else if (firstWord == "log")
-        {
-            PrintActionsLog* printActionsLog = new PrintActionsLog;
-            printActionsLog->act(*this);
-        }
-        else if (firstWord == "close")
-        {
-            Close close;
-            close.act(*this);
-        }
-        else if (firstWord == "backup")
-        {
-            BackupWareHouse* backupWareHouse = new BackupWareHouse;
-            backupWareHouse->act(*this);
-        }
-        else if (firstWord == "restore")
-        {
-            RestoreWareHouse* restoreWareHouse = new RestoreWareHouse;
-            restoreWareHouse->act(*this);
-        }
-        else
-        {
-            std::cout << "Invalid input" << std::endl;
-        }
-        std::cout << "" << std::endl; // just empty line
-    }
-}
-void WareHouse::setIsOpen(bool open) {
-    isOpen = open;
-}
-
-void WareHouse::setCustomerCounter(int counter)
-{
-    customerCounter = counter;
-}
-
-void WareHouse::setOrderCounter(int counter)
-{
-    orderCounter = counter;
 }
