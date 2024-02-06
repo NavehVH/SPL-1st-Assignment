@@ -136,7 +136,6 @@ bool LimitedCollectorVolunteer::hasOrdersLeft() const {
     return false;
 }
 
-//#TODO: Probably will change this, too many checks, check if i need to delete him here if reached max order
 bool LimitedCollectorVolunteer::canTakeOrder(const Order &order) const {
     if (CollectorVolunteer::canTakeOrder(order) && hasOrdersLeft())
         return true;
@@ -224,7 +223,7 @@ bool DriverVolunteer::canTakeOrder(const Order &order) const {
 
  void DriverVolunteer::acceptOrder(const Order &order) {
     activeOrderId = order.getId();
-    distanceLeft = order.getDistance(); //#TODO: Check about this in the forum
+    distanceLeft = order.getDistance();
 }
 
 void DriverVolunteer::step() {

@@ -29,15 +29,14 @@ SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 }
 
 void SimulateStep::act(WareHouse &wareHouse)
-
 {
     for (int i = 0; i < numOfSteps; i++)
     {
         for (Order *o : wareHouse.getPendingOrders()) // step (1)
         {
-           for (Volunteer *v : wareHouse.getVolunteers())
+            for (Volunteer *v : wareHouse.getVolunteers())
             {
-                if (v->hasFinishedOrder() && v->canTakeOrder(*o))
+                if (v->canTakeOrder(*o))
                 {
                     v->acceptOrder(*o);
                     wareHouse.addOrder(o);
@@ -49,6 +48,10 @@ void SimulateStep::act(WareHouse &wareHouse)
                 }
             }
         }
+
+        for (Order *o : wareHouse.getInProcessOrders())
+            if (wareHouse.isInPending(o))
+                wareHouse.eraseFromPending(o);
 
         for (Volunteer *v : wareHouse.getVolunteers()) // step (2)
             v->step();
@@ -63,11 +66,11 @@ void SimulateStep::act(WareHouse &wareHouse)
                 wareHouse.setOrder(o);
                 v->setActiveOrderId(NO_ORDER);
             }
-            if (!v->hasOrdersLeft()) // step (4)
-            {
-                wareHouse.DeleteLimitedVolunteer(v);
-            }
         }
+
+        for (Volunteer *v : wareHouse.getVolunteers())
+            if (!v->hasOrdersLeft() && !v->isBusy()) // step (4)
+                wareHouse.DeleteLimitedVolunteer(v);
     }
     complete();
     wareHouse.addAction(this);

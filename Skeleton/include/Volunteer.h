@@ -64,7 +64,7 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
     public:
         LimitedCollectorVolunteer(int id, string name, int coolDown ,int maxOrders); //d
         LimitedCollectorVolunteer *clone() const override; //d
-        bool hasOrdersLeft() const override; //TODO
+        bool hasOrdersLeft() const override; 
         bool canTakeOrder(const Order &order) const override; //d
         void acceptOrder(const Order &order) override;
 

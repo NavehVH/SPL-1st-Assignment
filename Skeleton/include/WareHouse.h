@@ -39,6 +39,8 @@ public:
     void setOrderCounter(int orderC);
     void setCustomerCounter(int customerC);
     void DeleteLimitedVolunteer(Volunteer *v);
+    bool isInPending(Order *order);
+    void eraseFromPending(Order *order);
     vector<Order *> &getPendingOrders(); // added by myself
     vector<Order *> &getInProcessOrders();
     vector<Order *> &getCompletedOrders();

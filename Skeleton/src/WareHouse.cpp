@@ -294,17 +294,26 @@ void WareHouse::addOrder(Order *order)
     {
         if (order->getStatus() == OrderStatus::PENDING)
         {
-            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
             inProcessOrders.push_back(order);
             order->setStatus(OrderStatus::COLLECTING);
         }
         else if (order->getStatus() == OrderStatus::COLLECTING)
         {
-            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
             inProcessOrders.push_back(order);
             order->setStatus(OrderStatus::DELIVERING);
         }
     }
+}
+
+bool WareHouse::isInPending(Order *order) {
+    if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
+        return true;
+    return false;
+}
+
+void WareHouse::eraseFromPending(Order *order) {
+    if (std::find(pendingOrders.begin(), pendingOrders.end(), order) != pendingOrders.end())
+            pendingOrders.erase(std::remove(pendingOrders.begin(), pendingOrders.end(), order), pendingOrders.end());
 }
 
 void WareHouse::setOrder(Order *order)
