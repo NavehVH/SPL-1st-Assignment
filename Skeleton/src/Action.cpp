@@ -34,6 +34,7 @@ void SimulateStep::act(WareHouse &wareHouse)
     {
         for (Order *o : wareHouse.getPendingOrders()) // step (1)
         {
+            std::cout << "ID: " + std::to_string(o->getId()) << std::endl;
             for (Volunteer *v : wareHouse.getVolunteers())
             {
                 if (v->canTakeOrder(*o))
