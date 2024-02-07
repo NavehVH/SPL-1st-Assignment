@@ -34,7 +34,6 @@ void SimulateStep::act(WareHouse &wareHouse)
     {
         for (Order *o : wareHouse.getPendingOrders()) // step (1)
         {
-            std::cout << "ID: " + std::to_string(o->getId()) << std::endl;
             for (Volunteer *v : wareHouse.getVolunteers())
             {
                 if (v->canTakeOrder(*o))
@@ -302,7 +301,7 @@ BackupWareHouse *BackupWareHouse::clone() const
 
 string BackupWareHouse::toString() const
 {
-    return "backupWareHouse";
+    return "backup";
 }
 
 void RestoreWareHouse::act(WareHouse &wareHouse)
@@ -310,6 +309,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
     if (backup == nullptr)
     {
         error("Backup does not exist");
+        wareHouse.addAction(this);
     }
     else
     {
@@ -326,7 +326,7 @@ RestoreWareHouse *RestoreWareHouse::clone() const
 
 string RestoreWareHouse::toString() const
 {
-    return "restoreWareHouse";
+    return "restore";
 }
 
 void Close::act(WareHouse &wareHouse)
