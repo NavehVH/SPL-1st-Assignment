@@ -71,43 +71,39 @@ WareHouse &WareHouse::operator=(const WareHouse &other)
             delete a;
             a = nullptr;
         }
-        actionsLog.clear();
-
         for (Volunteer *v : volunteers)
         {
             delete v;
             v = nullptr;
         }
-        volunteers.clear();
-
         for (Order *o : pendingOrders)
         {
             delete o;
             o = nullptr;
         }
-        pendingOrders.clear();
-
         for (Order *o : inProcessOrders)
         {
             delete o;
             o = nullptr;
         }
-        inProcessOrders.clear();
-
         for (Order *o : completedOrders)
         {
             delete o;
             o = nullptr;
         }
-        completedOrders.clear();
-
         for (Customer *c : customers)
         {
             delete c;
             c = nullptr;
         }
+        
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
         customers.clear();
-
+        
         for (const Action *a : other.actionsLog)
         {
             actionsLog.push_back(a->clone());
@@ -142,13 +138,56 @@ WareHouse::WareHouse(WareHouse &&other) noexcept
       pendingOrders(std::move(other.pendingOrders)), inProcessOrders(std::move(other.inProcessOrders)),
       completedOrders(std::move(other.completedOrders)), customers(std::move(other.customers)), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter)
 {
+}
 
-    other.actionsLog.clear();
-    other.volunteers.clear();
-    other.pendingOrders.clear();
-    other.inProcessOrders.clear();
-    other.completedOrders.clear();
-    other.customers.clear();
+WareHouse& WareHouse::operator=(WareHouse &&other) noexcept {
+    if (this != &other) {
+        for (Action *a : actionsLog) {
+            delete a;
+            a = nullptr;
+        }
+        for (Volunteer *v : volunteers) {
+            delete v;
+            v = nullptr;
+        }
+        for (Order *o : pendingOrders) {
+            delete o;
+            o = nullptr;
+        }
+        for (Order *o : inProcessOrders) {
+            delete o;
+            o = nullptr;
+        }
+        for (Order *o : completedOrders) {
+            delete o;
+            o = nullptr;
+        }
+        for (Customer *c : customers) {
+            delete c;
+            c = nullptr;
+        }
+
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
+        customers.clear();
+
+        isOpen = other.isOpen;
+        actionsLog = std::move(other.actionsLog);
+        volunteers = std::move(other.volunteers);
+        pendingOrders = std::move(other.pendingOrders);
+        inProcessOrders = std::move(other.inProcessOrders);
+        completedOrders = std::move(other.completedOrders);
+        customers = std::move(other.customers);
+        customerCounter = other.customerCounter;
+        volunteerCounter = other.volunteerCounter;
+        orderCounter = other.orderCounter;
+
+    }
+
+    return *this;
 }
 
 WareHouse::~WareHouse()
