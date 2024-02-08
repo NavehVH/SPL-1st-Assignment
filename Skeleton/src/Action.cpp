@@ -27,6 +27,7 @@ string Action::getErrorMsg() const
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps)
 {
 }
+
 //STIMULATESTEP
 void SimulateStep::act(WareHouse &wareHouse)
 {
